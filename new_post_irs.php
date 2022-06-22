@@ -32,17 +32,33 @@
     $kd_mk_p = $srow->str_kd_mk;
 // End Select yang di perlukan
 
-// Cek Matakuliah Sama
-    $Sql = "SELECT * from aka_krs a inner join aka_perkuliahan_detail b on a.int_kd_perkuliahan_d = b.int_kd_perkuliahan_d
-    where a.str_id_nim = '" . $str_id_nim . "'
-    and b.str_kd_perkuliahan = '". mysqli_real_escape_string($conn, $kd_mk) . "' and a.str_thn_ajaran = (SELECT str_thn_ajaran_krs FROM pablic_reset)  AND a.bol_semester = (SELECT bol_semester_krs FROM pablic_reset)  ";
+// Cek matakuliah syarat
+    $angkatan = substr($str_id_nim, 0, 4);
+    if('UM1714' == $kd_mk_p and $angkatan <= '2014') {
+        $Err = '';
+    } else {
+        $ssSql = "SELECT * FROM aka_nilai where str_id_nim = '" . $str_id_nim . "' and str_kd_mk in (SELECT str_kd_mk_syarat FROM
+        aka_matakuliah_syarat WHERE str_kd_mk = '" . $kd_mk_p . "')";
 
-    $Query=mysqli_query($conn, $Sql);
-    $cekMakul=mysqli_num_rows($Query);
-    if ($cekMakul > 0){
-        echo 'Mata Kuliah Sudah diambil';
+        $ssQuery = mysqli_query($conn, $ssSql);
+        $cekssQuery=mysqli_num_rows($ssQuery);
+        if (0 == $cekssQuery) {
+            $sqlsyarat = "SELECT b.str_nm_mk FROM aka_matakuliah_syarat a
+            INNER JOIN aka_matakuliah b ON a.str_kd_mk_syarat = b.str_kd_mk
+            WHERE a.str_kd_mk = '" . $kd_mk_p . "' ";
+
+            $ssQueryS = mysqli_query($conn, $sqlsyarat);
+            while ($ssRowS = mysqli_fetch_object($ssQueryS)) {
+                // $ssRowS->str_nm_mk;
+                $Err = 'Mata Kuliah Syarat'. ' '.
+                $ssRowS->str_nm_mk . ' '. "Tidak Terpenuhi\n";
+
+                echo $Err;
+            }
+        }
     }
-// End Cek Matakuliah Sama
+
+// End Cek matakuliah syarat
 
 // Cek sisa kursi
     $sSqlsisa = "SELECT num_jml_sisa from aka_perkuliahan_detail
@@ -52,47 +68,155 @@
     $srowsisa = mysqli_fetch_object($sQuerysisa);
     $sisa = $srowsisa->num_jml_sisa;
     if (0 == $sisa) {
-        echo 'Kelas Sudah Penuh';
+        echo $Err2 = 'Kelas Sudah Penuh';
+    } else{
+        echo $Err2 = '';
     }
+    
 // End cek sisa kursi
 
-$Err = '';
+// Cek Matakuliah Sama
+    $Sql = "SELECT * from aka_krs a inner join aka_perkuliahan_detail b on a.int_kd_perkuliahan_d = b.int_kd_perkuliahan_d
+    where a.str_id_nim = '" . $str_id_nim . "'
+    and b.str_kd_perkuliahan = '" . mysqli_real_escape_string($conn, $kd_mk) . "' and a.str_thn_ajaran = (SELECT str_thn_ajaran_krs FROM pablic_reset)  AND a.bol_semester = (SELECT bol_semester_krs FROM pablic_reset)  ";
+
+    $Query=mysqli_query($conn, $Sql);
+    $cekMakul=mysqli_num_rows($Query);
+    if ($cekMakul > 0){
+        echo $Err3 = "Mata Kuliah Sudah diambil";
+    } else {
+       echo $Err3 = '';
+    }
+// End Cek Matakuliah Sama
+
 // Cek Jam dan Hari
-            $jamSql = "SELECT b.* FROM aka_krs a INNER JOIN aka_perkuliahan_detail b ON a.int_kd_perkuliahan_d = b.int_kd_perkuliahan_d
-            WHERE ((b.time_jam_awal BETWEEN '" . $j_awal . "' AND '" . $j_akhir . "')
-            OR (b.time_jam_akhir BETWEEN '" . $j_awal . "' AND '" . $j_akhir . "'))
-            and a.str_id_nim = '" . $str_id_nim . "'
-            and int_hari = '" . $hari . "' and str_thn_ajaran = (SELECT str_thn_ajaran_krs FROM pablic_reset)
-            AND bol_semester = (SELECT bol_semester_krs FROM pablic_reset)  ";
+    $jamSql = "SELECT b.* FROM aka_krs a INNER JOIN aka_perkuliahan_detail b ON a.int_kd_perkuliahan_d = b.int_kd_perkuliahan_d
+    WHERE ((b.time_jam_awal BETWEEN '" . $j_awal . "' AND '" . $j_akhir . "')
+    OR (b.time_jam_akhir BETWEEN '" . $j_awal . "' AND '" . $j_akhir . "'))
+    and a.str_id_nim = '" . $str_id_nim . "'
+    and int_hari = '" . $hari . "' and str_thn_ajaran = (SELECT str_thn_ajaran_krs FROM pablic_reset)
+    AND bol_semester = (SELECT bol_semester_krs FROM pablic_reset)  ";
 
-            $jamQuery=mysqli_query($conn, $jamSql);
-            $cekJam=mysqli_num_rows($jamQuery);
+    $jamQuery=mysqli_query($conn, $jamSql);
+    $cekJam=mysqli_num_rows($jamQuery);
 
-            if ('UM1715' == $kd_mk_p or 'UM1712' == $kd_mk_p or 'SP1704' == $kd_mk_p) {
-                
+    if ('UM1715' == $kd_mk_p or 'UM1712' == $kd_mk_p or 'SP1704' == $kd_mk_p) {
+       echo $Err4 = '';
+    } else {
+        if ($cekJam > 0 and $kd_mk_p) {
+            echo $Err4 = "Mata kuliah Bentrok\n";
+        } else {
+            echo $Err4 = '';
+        }
+    }
 
-            } else {
-                if ($cekJam > 0 and $kd_mk_p) {
-                    echo 'Mata kuliah Bentrok';
-                }
-            }
+    if('' == $Err4) {
+        $Sql = "SELECT num_jml_sisa,num_jml_peserta from aka_perkuliahan_detail
+        where int_kd_perkuliahan_d = '$int_kd_perkuliahan_d' ";
 
-            if('' == $Err) {
-                $Sql = "SELECT num_jml_sisa,num_jml_peserta from aka_perkuliahan_detail
-                where int_kd_perkuliahan_d = '$int_kd_perkuliahan_d' ";
+        $Query=mysqli_query($conn, $Sql);
+        $row = mysqli_fetch_object($Query);
 
-                $Query=mysqli_query($conn, $Sql);
-                $row = mysqli_fetch_object($Query);
+        $sisa = $row->num_jml_sisa - 1;
+        $peserta = $row->num_jml_peserta + 1;
 
-                $sisa = $row->num_jml_sisa - 1;
-                $peserta = $row->num_jml_peserta + 1;
+        $inSql = "update aka_perkuliahan_detail set num_jml_sisa = '{$sisa}',num_jml_peserta = '{$peserta}'
+        where int_kd_perkuliahan_d = '$int_kd_perkuliahan_d' ";
 
-                $inSql = "update aka_perkuliahan_detail set num_jml_sisa = '{$sisa}',num_jml_peserta = '{$peserta}'
-                where int_kd_perkuliahan_d = '$int_kd_perkuliahan_d' ";
-                
-            }
+    } else {
+        echo $Err4 = "makul full";
+    }
+
 // End Cek Jam dan Hari
 
+// Cek Matakuliah Project Techno
+    if ('SP1703' == $kd_mk_p) {
+        $Sql = "select * from aka_syarat where str_id_nim = '" . $str_id_nim . "'";
+        $checkTechnoSql = "SELECT * FROM aka_nilai WHERE str_id_nim = '" . $str_id_nim . "' AND str_na NOT IN ('C-','D','E')  AND str_kd_mk IN (SELECT str_kd_mk_syarat FROM aka_matakuliah_syarat WHERE str_kd_mk = 'SP1703') ";
+
+        $Query = mysqli_query($conn, $Sql);
+        $cek1=mysqli_num_rows($Query);
+
+        $technoQuery = mysqli_query($conn, $checkTechnoSql);
+        $cek2=mysqli_num_rows($technoQuery);
+
+        if ($cek1 < 1 && $cek2 < 1){
+            echo $Err5 = 'Mata kuliah tidak dapat di ambil, Syarat harus lulus BSC dan Technopreneur';
+        }else {
+            echo $Err5 = '';
+        }
+    } else {
+       echo $Err5 = '';
+    }
+// End Cek Matakuliah Project Techno
+
+if($Err = ''){
+    if($Err2 =''){
+        if($Err3 = ''){
+            if($Err4 = ''){
+                if($Err5 = ''){
+                    // ADD IRS
+                        // Menampilkan seluruh data POST
+                            foreach ($_POST as $param_name => $param_val) {
+                                if ($param_name == "str_id_nim"){
+                                    $str_id_nim = $param_val;
+                                }
+                                else if($param_name == "int_kd_perkuliahan_d"){
+                                    $int_kd_perkuliahan_d = $param_val;
+                                }
+                                else if($param_name == "str_kd_perwalian"){
+                                    $str_kd_perwalian = $param_val;
+                                }
+                                else if($param_name == "tgljam_perwalian"){
+                                    $tgljam_perwalian = $param_val;
+                                }
+                                else if($param_name == "str_tahun_ajaran"){
+                                    $str_tahun_ajaran = $param_val;
+                                }
+                                else {
+                                    $bol_semester = $param_val;
+                                }
+                            }
+                        // Akhir Menampilkan seluruh data POST
+                        
+                        // Query add ke tabel aka_krs
+                        $sql = "INSERT INTO aka_krs (str_id_nim,int_kd_perkuliahan_d,str_kd_perwalian,tgljam_perwalian,str_thn_ajaran,bol_semester) VALUES ('" . $str_id_nim . "','" . $int_kd_perkuliahan_d . "','" . $kode . "','',(SELECT str_thn_ajaran_krs FROM pablic_reset) ,(SELECT bol_semester_krs FROM pablic_reset) )";
+
+                        //Running Query
+                        $query = mysqli_query($conn, $sql);
+                        if($query) {
+                            $msg = "Simpan Data IRS Berhasil";
+                        }else{
+                            $msg = "Simpan Data IRS Gagal";
+                        }
+                        // End Running Query
+
+                        // Mengambil respon untuk di encode menjadi JSON
+                        $response = array(
+                            'status'=>'OK',
+                            'msg'=>$msg
+                        );
+
+                        // ENCODE menjadi data JSON
+                        echo json_encode($response);
+
+                        // Akhir add ke tabel aka_krs
+                    // End ADD IRS
+                }else{
+                    echo $Err5 = 'Mata kuliah tidak dapat di ambil, Syarat harus lulus BSC dan Technopreneur';
+                }
+            }else{
+                echo $Err4 = "Mata kuliah Bentrok\n";
+            }
+        }else {
+            echo $Err3 = "Mata Kuliah Sudah diambil";
+        }
+    }else{
+        echo $Err2 = 'Kelas Sudah Penuh';
+    }
+} else{
+    echo $Err;
+}
 
 
 mysqli_close($conn);
