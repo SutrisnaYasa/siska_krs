@@ -123,9 +123,7 @@
         $inSql = "update aka_perkuliahan_detail set num_jml_sisa = '{$sisa}',num_jml_peserta = '{$peserta}'
         where int_kd_perkuliahan_d = '$int_kd_perkuliahan_d' ";
 
-    } else {
-        echo $Err4 = "makul full";
-    }
+    } 
 
 // End Cek Jam dan Hari
 
