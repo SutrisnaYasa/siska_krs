@@ -45,23 +45,23 @@
     $resultSP=mysqli_query($conn, $queryceksp);
     $uDataceksp = mysqli_fetch_object($resultSP);
     
-    $datasp = $uDataceksp->num_kd_sms_krs;
+    // $datasp = $uDataceksp->num_kd_sms_krs;
 
-    $cek = mysqli_num_rows($resultAngkatan);
-    if ($cek > 0) {
-        $uQuery = "SELECT * FROM users where username='$nim'";
-        $userQue = mysqli_query($conn, $uQuery);
-        $uData = mysqli_fetch_object($userQue);
-        if ('3' == $uDataceksp->num_kd_sms_krs) {
-            $xfil = "AND a.str_kd_prodi in ({$fProdi})";
-        } else {
-            $xfil = "AND b.int_kd_kelas in ({$inKls})
-            AND a.str_kd_prodi in ({$fProdi})";
-        }
-    } elseif (!empty($_GET['nim'])) {
-        $xfil = 'AND b.int_kd_kelas in (0001,0004,0006,0007)
-        AND a.str_kd_prodi in (1)';
-    }  
+    // $cek = mysqli_num_rows($resultAngkatan);
+    // if ($cek > 0) {
+    //     $uQuery = "SELECT * FROM users where username='$nim'";
+    //     $userQue = mysqli_query($conn, $uQuery);
+    //     $uData = mysqli_fetch_object($userQue);
+    //     if ('3' == $uDataceksp->num_kd_sms_krs) {
+    //         $xfil = "AND a.str_kd_prodi in ({$fProdi})";
+    //     } else {
+    //         $xfil = "AND b.int_kd_kelas in ({$inKls})
+    //         AND a.str_kd_prodi in ({$fProdi})";
+    //     }
+    // } elseif (!empty($_GET['nim'])) {
+    //     $xfil = 'AND b.int_kd_kelas in (0001,0004,0006,0007)
+    //     AND a.str_kd_prodi in (1)';
+    // }  
 
 // Akhir Cek Semester SP
    
@@ -77,6 +77,7 @@ if ('3' == $uDataceksp->num_kd_sms_krs) {
     AND a.`str_kd_prodi` = g.`str_kd_prodi`
     WHERE a.str_thn_ajaran = (SELECT str_thn_ajaran_krs FROM pablic_reset)
     AND a.bol_semester = (SELECT bol_semester_krs FROM pablic_reset)
+    AND a.str_kd_prodi in ({$fProdi})
     AND g.str_thn_kurikulum = '" . mysqli_real_escape_string($conn, $kurikulum) . "'
     ORDER BY g.num_kd_semester,d.str_kd_hari,b.time_jam_awal";
 
@@ -87,8 +88,6 @@ if ('3' == $uDataceksp->num_kd_sms_krs) {
     }while($row=mysqli_fetch_assoc($result));
 
     echo json_encode($hasil);
-
-
 
 } else {
     $query = "SELECT b.int_kd_perkuliahan_d, b.str_nm_kelas, c.str_kd_mk, c.str_nm_mk, e.str_nm_kad, d.str_nama_hari, f.str_nm_ruang, MID(b.time_jam_awal,1,5) as awal, MID(b.time_jam_akhir,1,5) as akhir, g.num_sks, g.num_kd_semester, b.num_jml_sisa, a.str_desc, g.str_thn_kurikulum FROM aka_perkuliahan a
@@ -102,6 +101,8 @@ if ('3' == $uDataceksp->num_kd_sms_krs) {
     AND g.`num_kd_semester`%2 = (SELECT num_kd_sms_krs FROM pablic_reset)
     WHERE a.str_thn_ajaran = (SELECT str_thn_ajaran_krs FROM pablic_reset)
     AND a.bol_semester = (SELECT bol_semester_krs FROM pablic_reset)
+    AND a.str_kd_prodi in ({$fProdi})
+    AND b.int_kd_kelas in ({$inKls})
     AND g.str_thn_kurikulum = '" . mysqli_real_escape_string($conn, $kurikulum) . "'
     ORDER BY g.num_kd_semester,d.str_kd_hari,b.time_jam_awal";
 
