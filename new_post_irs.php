@@ -35,13 +35,14 @@
 // Cek matakuliah syarat
     $angkatan = substr($str_id_nim, 0, 4);
     if('UM1714' == $kd_mk_p and $angkatan <= '2014') {
-        $Err = '';
+       $Err = '';
     } else {
         $ssSql = "SELECT * FROM aka_nilai where str_id_nim = '" . $str_id_nim . "' and str_kd_mk in (SELECT str_kd_mk_syarat FROM
         aka_matakuliah_syarat WHERE str_kd_mk = '" . $kd_mk_p . "')";
 
         $ssQuery = mysqli_query($conn, $ssSql);
         $cekssQuery=mysqli_num_rows($ssQuery);
+
         if (0 == $cekssQuery) {
             $sqlsyarat = "SELECT b.str_nm_mk FROM aka_matakuliah_syarat a
             INNER JOIN aka_matakuliah b ON a.str_kd_mk_syarat = b.str_kd_mk
@@ -49,16 +50,17 @@
 
             $ssQueryS = mysqli_query($conn, $sqlsyarat);
             while ($ssRowS = mysqli_fetch_object($ssQueryS)) {
-                // $ssRowS->str_nm_mk;
+
                 $Err = 'Mata Kuliah Syarat'. ' '.
                 $ssRowS->str_nm_mk . ' '. "Tidak Terpenuhi\n";
 
-                echo $Err;
-            }
+                // echo $Err;
+            };
+        } else{
+            $Err = '1';
         }
     }
-
-// End Cek matakuliah syarat
+// End Cek matakuliah syarat DONE
 
 // Cek sisa kursi
     $sSqlsisa = "SELECT num_jml_sisa from aka_perkuliahan_detail
@@ -68,12 +70,11 @@
     $srowsisa = mysqli_fetch_object($sQuerysisa);
     $sisa = $srowsisa->num_jml_sisa;
     if (0 == $sisa) {
-        echo $Err2 = 'Kelas Sudah Penuh';
+        $Err2 = 'Kelas Sudah Penuh';
     } else{
-        echo $Err2 = '';
+        $Err2 = '2';
     }
-    
-// End cek sisa kursi
+// End cek sisa kursi DONE
 
 // Cek Matakuliah Sama
     $Sql = "SELECT * from aka_krs a inner join aka_perkuliahan_detail b on a.int_kd_perkuliahan_d = b.int_kd_perkuliahan_d
@@ -83,11 +84,11 @@
     $Query=mysqli_query($conn, $Sql);
     $cekMakul=mysqli_num_rows($Query);
     if ($cekMakul > 0){
-        echo $Err3 = "Mata Kuliah Sudah diambil";
+        $Err3 = "Mata Kuliah Sudah diambil";
     } else {
-       echo $Err3 = '';
+       $Err3 = '3';
     }
-// End Cek Matakuliah Sama
+// End Cek Matakuliah Sama DONE
 
 // Cek Jam dan Hari
     $jamSql = "SELECT b.* FROM aka_krs a INNER JOIN aka_perkuliahan_detail b ON a.int_kd_perkuliahan_d = b.int_kd_perkuliahan_d
@@ -101,18 +102,18 @@
     $cekJam=mysqli_num_rows($jamQuery);
 
     if ('UM1715' == $kd_mk_p or 'UM1712' == $kd_mk_p or 'SP1704' == $kd_mk_p) {
-       echo $Err4 = '';
+       $Err4 = '';
     } else {
         if ($cekJam > 0 and $kd_mk_p) {
-            echo $Err4 = "Mata kuliah Bentrok\n";
+            $Err4 = "Mata kuliah Bentrok\n";
         } else {
-            echo $Err4 = '';
+            $Err4 = '';
         }
     }
 
     if('' == $Err4) {
         $Sql = "SELECT num_jml_sisa,num_jml_peserta from aka_perkuliahan_detail
-        where int_kd_perkuliahan_d = '$int_kd_perkuliahan_d' ";
+        where int_kd_perkuliahan_d = '" .$int_kd_perkuliahan_d ."' ";
 
         $Query=mysqli_query($conn, $Sql);
         $row = mysqli_fetch_object($Query);
@@ -121,11 +122,13 @@
         $peserta = $row->num_jml_peserta + 1;
 
         $inSql = "update aka_perkuliahan_detail set num_jml_sisa = '{$sisa}',num_jml_peserta = '{$peserta}'
-        where int_kd_perkuliahan_d = '$int_kd_perkuliahan_d' ";
+			where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) . "' ";
+
+        $QueryUpdate=mysqli_query($conn, $inSql);
 
     } 
 
-// End Cek Jam dan Hari
+// End Cek Jam dan Hari DONE
 
 // Cek Matakuliah Project Techno
     if ('SP1703' == $kd_mk_p) {
@@ -140,82 +143,79 @@
 
         if ($cek1 < 1 && $cek2 < 1){
             echo $Err5 = 'Mata kuliah tidak dapat di ambil, Syarat harus lulus BSC dan Technopreneur';
-        }else {
-            echo $Err5 = '';
         }
-    } else {
-       echo $Err5 = '';
+    }else {
+        $Err5 = '5';
     }
-// End Cek Matakuliah Project Techno
-
-if($Err = ''){
-    if($Err2 =''){
-        if($Err3 = ''){
-            if($Err4 = ''){
-                if($Err5 = ''){
+// End Cek Matakuliah Project Techno DONE
+     
+if($Err = '1'){
+    if($Err3 == '3'){
+        if($Err4 == ''){
+            if($Err5 == '5'){
+                if($Err2 == '2'){
                     // ADD IRS
-                        // Menampilkan seluruh data POST
-                            foreach ($_POST as $param_name => $param_val) {
-                                if ($param_name == "str_id_nim"){
-                                    $str_id_nim = $param_val;
-                                }
-                                else if($param_name == "int_kd_perkuliahan_d"){
-                                    $int_kd_perkuliahan_d = $param_val;
-                                }
-                                else if($param_name == "str_kd_perwalian"){
-                                    $str_kd_perwalian = $param_val;
-                                }
-                                else if($param_name == "tgljam_perwalian"){
-                                    $tgljam_perwalian = $param_val;
-                                }
-                                else if($param_name == "str_tahun_ajaran"){
-                                    $str_tahun_ajaran = $param_val;
-                                }
-                                else {
-                                    $bol_semester = $param_val;
-                                }
-                            }
-                        // Akhir Menampilkan seluruh data POST
-                        
-                        // Query add ke tabel aka_krs
-                        $sql = "INSERT INTO aka_krs (str_id_nim,int_kd_perkuliahan_d,str_kd_perwalian,tgljam_perwalian,str_thn_ajaran,bol_semester) VALUES ('" . $str_id_nim . "','" . $int_kd_perkuliahan_d . "','" . $kode . "','',(SELECT str_thn_ajaran_krs FROM pablic_reset) ,(SELECT bol_semester_krs FROM pablic_reset) )";
-
-                        //Running Query
-                        $query = mysqli_query($conn, $sql);
-                        if($query) {
-                            $msg = "Simpan Data IRS Berhasil";
-                        }else{
-                            $msg = "Simpan Data IRS Gagal";
+                    // Menampilkan seluruh data POST
+                    foreach ($_POST as $param_name => $param_val) {
+                        if ($param_name == "str_id_nim"){
+                            $str_id_nim = $param_val;
                         }
-                        // End Running Query
+                        else if($param_name == "int_kd_perkuliahan_d"){
+                            $int_kd_perkuliahan_d = $param_val;
+                        }
+                        else if($param_name == "str_kd_perwalian"){
+                            $str_kd_perwalian = $param_val;
+                        }
+                        else if($param_name == "tgljam_perwalian"){
+                            $tgljam_perwalian = $param_val;
+                        }
+                        else if($param_name == "str_tahun_ajaran"){
+                            $str_tahun_ajaran = $param_val;
+                        }
+                        else {
+                            $bol_semester = $param_val;
+                        }
+                    }
+                    // Akhir Menampilkan seluruh data POST
 
-                        // Mengambil respon untuk di encode menjadi JSON
-                        $response = array(
-                            'status'=>'OK',
-                            'msg'=>$msg
-                        );
+                    // Query add ke tabel aka_krs
+                    $sql = "INSERT INTO aka_krs (str_id_nim,int_kd_perkuliahan_d,str_kd_perwalian,tgljam_perwalian,str_thn_ajaran,bol_semester) VALUES ('" . $str_id_nim . "','" . $int_kd_perkuliahan_d . "','" . $kode . "','',(SELECT str_thn_ajaran_krs FROM pablic_reset) ,(SELECT bol_semester_krs FROM pablic_reset) )";
 
-                        // ENCODE menjadi data JSON
-                        echo json_encode($response);
+                    //Running Query
+                    $query = mysqli_query($conn, $sql);
+                    if($query) {
+                        $msg = "Simpan Data IRS Berhasil";
+                    }else{
+                        $msg = "Simpan Data IRS Gagal";
+                    }
+                    // End Running Query
 
-                        // Akhir add ke tabel aka_krs
-                    // End ADD IRS
+                    // Mengambil respon untuk di encode menjadi JSON
+                    $response = array(
+                        'status'=>'OK',
+                        'msg'=>$msg
+                    );
+
+                    // ENCODE menjadi data JSON
+                    echo json_encode($response);
+
+                    // Akhir add ke tabel aka_krs
+                // End ADD IRS
                 }else{
-                    echo $Err5 = 'Mata kuliah tidak dapat di ambil, Syarat harus lulus BSC dan Technopreneur';
+                    echo $Err2;
                 }
-            }else{
-                echo $Err4 = "Mata kuliah Bentrok\n";
+            }else {
+                echo $Err5;
             }
         }else {
-            echo $Err3 = "Mata Kuliah Sudah diambil";
+            echo $Err4;
         }
-    }else{
-        echo $Err2 = 'Kelas Sudah Penuh';
+    }else {
+        echo $Err3;
     }
-} else{
+} else {
     echo $Err;
 }
-
 
 mysqli_close($conn);
 ?>

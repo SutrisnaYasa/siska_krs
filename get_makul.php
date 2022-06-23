@@ -5,23 +5,7 @@
     $nim=$_GET['nim']; //2101030009
 // Akhir Mengambil request
 
-// Mengambil status FINAL atau Belum FINAL KRS
-   $status = false;
-   $perintah = "SELECT str_kd_perwalian, bol_final FROM aka_krs WHERE str_id_nim='$nim' AND str_thn_ajaran=(SELECT str_thn_ajaran_krs FROM pablic_reset LIMIT 1) AND bol_semester=(SELECT bol_semester_krs FROM pablic_reset LIMIT 1)";
-
-    $Query=mysqli_query($conn, $perintah);
-    $result = mysqli_fetch_object($Query);
-    foreach ($result as $_Data) {
-        if (true == $_Data->bol_final){
-            $status = true;
-        } else {
-            $status = false;
-        }
-    }
-
-    // var_dump($status);
-
-// Akhir dari Mengambil status FINAL atau Belum FINAL KRS
+// // Akhir dari Mengambil status FINAL atau Belum FINAL KRS
 
 // Query mengambil data angkatan MHS
 
@@ -46,10 +30,10 @@
         $inKls = '1';
     }
 
-    if ('2019' == $uDatack->str_angkatan || '2020' == $uDatack->str_angkatan) {
-        $kurikulum = "AND g.str_thn_kurikulum = '2020'";
+    if ('2019' == $uDatack->str_angkatan || '2020' == $uDatack->str_angkatan || '2021' == $uDatack->str_angkatan || '2022' == $uDatack->str_angkatan) {
+        $kurikulum = '2020';
     } else {
-        $kurikulum = "AND g.str_thn_kurikulum = '2017'";
+        $kurikulum = '2017';
     }
 
 
@@ -60,6 +44,8 @@
 
     $resultSP=mysqli_query($conn, $queryceksp);
     $uDataceksp = mysqli_fetch_object($resultSP);
+    
+    $datasp = $uDataceksp->num_kd_sms_krs;
 
     $cek = mysqli_num_rows($resultAngkatan);
     if ($cek > 0) {
@@ -80,9 +66,8 @@
 // Akhir Cek Semester SP
    
 // Query untuk menampilkan Kelas yang dibuka
-if ('3' == $uDataceksp->$num_kd_sms_krs) {
-    $query=
-    "SELECT b.int_kd_perkuliahan_d, b.str_nm_kelas, c.str_kd_mk, c.str_nm_mk, e.str_nm_kad, d.str_nama_hari, f.str_nm_ruang, MID(b.time_jam_awal,1,5) as awal, MID(b.time_jam_akhir,1,5) as akhir, g.num_sks, g.num_kd_semester, b.num_jml_sisa, a.str_desc, g.str_thn_kurikulum FROM aka_perkuliahan a
+if ('3' == $uDataceksp->num_kd_sms_krs) {
+    $query = "SELECT b.int_kd_perkuliahan_d, b.str_nm_kelas, c.str_kd_mk, c.str_nm_mk, e.str_nm_kad, d.str_nama_hari, f.str_nm_ruang, MID(b.time_jam_awal,1,5) as awal, MID(b.time_jam_akhir,1,5) as akhir, g.num_sks, g.num_kd_semester, b.num_jml_sisa, a.str_desc, g.str_thn_kurikulum FROM aka_perkuliahan a
     INNER JOIN aka_perkuliahan_detail b ON a.str_kd_perkuliahan = b.str_kd_perkuliahan
     INNER JOIN aka_matakuliah c ON a.str_kd_mk = c.str_kd_mk
     INNER JOIN mst_hari d ON b.int_hari = d.str_kd_hari
@@ -92,21 +77,21 @@ if ('3' == $uDataceksp->$num_kd_sms_krs) {
     AND a.`str_kd_prodi` = g.`str_kd_prodi`
     WHERE a.str_thn_ajaran = (SELECT str_thn_ajaran_krs FROM pablic_reset)
     AND a.bol_semester = (SELECT bol_semester_krs FROM pablic_reset)
-    AND g.str_thn_kurikulum = '$kurikulum'
+    AND g.str_thn_kurikulum = '" . mysqli_real_escape_string($conn, $kurikulum) . "'
     ORDER BY g.num_kd_semester,d.str_kd_hari,b.time_jam_awal";
 
     $result=mysqli_query($conn, $query);
     $row=mysqli_fetch_assoc($result);
-
     do {
         $hasil[]=$row;
     }while($row=mysqli_fetch_assoc($result));
 
     echo json_encode($hasil);
 
+
+
 } else {
-    $query=
-    "SELECT b.int_kd_perkuliahan_d, b.str_nm_kelas, c.str_kd_mk, c.str_nm_mk, e.str_nm_kad, d.str_nama_hari, f.str_nm_ruang, MID(b.time_jam_awal,1,5) as awal, MID(b.time_jam_akhir,1,5) as akhir, g.num_sks, g.num_kd_semester, b.num_jml_sisa, a.str_desc, g.str_thn_kurikulum FROM aka_perkuliahan a
+    $query = "SELECT b.int_kd_perkuliahan_d, b.str_nm_kelas, c.str_kd_mk, c.str_nm_mk, e.str_nm_kad, d.str_nama_hari, f.str_nm_ruang, MID(b.time_jam_awal,1,5) as awal, MID(b.time_jam_akhir,1,5) as akhir, g.num_sks, g.num_kd_semester, b.num_jml_sisa, a.str_desc, g.str_thn_kurikulum FROM aka_perkuliahan a
     INNER JOIN aka_perkuliahan_detail b ON a.str_kd_perkuliahan = b.str_kd_perkuliahan
     INNER JOIN aka_matakuliah c ON a.str_kd_mk = c.str_kd_mk
     INNER JOIN mst_hari d ON b.int_hari = d.str_kd_hari
@@ -117,18 +102,20 @@ if ('3' == $uDataceksp->$num_kd_sms_krs) {
     AND g.`num_kd_semester`%2 = (SELECT num_kd_sms_krs FROM pablic_reset)
     WHERE a.str_thn_ajaran = (SELECT str_thn_ajaran_krs FROM pablic_reset)
     AND a.bol_semester = (SELECT bol_semester_krs FROM pablic_reset)
-    AND g.str_thn_kurikulum = '$kurikulum'
+    AND g.str_thn_kurikulum = '" . mysqli_real_escape_string($conn, $kurikulum) . "'
     ORDER BY g.num_kd_semester,d.str_kd_hari,b.time_jam_awal";
 
-    $result=mysqli_query($conn, $query);
-    $row=mysqli_fetch_assoc($result);
-
+    $result = mysqli_query($conn, $query);
+    $row = mysqli_fetch_assoc($result);
     do {
         $hasil[]=$row;
     }while($row=mysqli_fetch_assoc($result));
 
     echo json_encode($hasil);
+
 }
+
+
 // Akhir Query untuk menampilkan Kelas yang dibuka
 
 ?>
