@@ -21,9 +21,9 @@
 // Select yang diperlukan
     $sSql = "SELECT a.time_jam_awal, a.time_jam_akhir, a.int_hari, a.str_kd_perkuliahan, b.str_kd_mk
     FROM aka_perkuliahan_detail a
-    INNER JOIN aka_perkuliahan b ON a.str_kd_perkuliahan = b.str_kd_perkuliahan WHERE a.int_kd_perkuliahan_d = '$int_kd_perkuliahan_d'";
+    INNER JOIN aka_perkuliahan b ON a.str_kd_perkuliahan = b.str_kd_perkuliahan WHERE a.int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) ."' ";
 
-    $sQuery=mysqli_query($conn, $sSql);
+    $sQuery = mysqli_query($conn, $sSql);
     $srow = mysqli_fetch_object($sQuery);
     $j_awal = $srow->time_jam_awal;
     $j_akhir = $srow->time_jam_akhir;
@@ -64,7 +64,7 @@
 
 // Cek sisa kursi
     $sSqlsisa = "SELECT num_jml_sisa from aka_perkuliahan_detail
-    where int_kd_perkuliahan_d = '$int_kd_perkuliahan_d' ";
+    where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) ."' ";
 
     $sQuerysisa = mysqli_query($conn, $sSqlsisa);
     $srowsisa = mysqli_fetch_object($sQuerysisa);
@@ -113,11 +113,10 @@
 
     if('' == $Err4) {
         $Sql = "SELECT num_jml_sisa,num_jml_peserta from aka_perkuliahan_detail
-        where int_kd_perkuliahan_d = '" .$int_kd_perkuliahan_d ."' ";
+        where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) . "' ";
 
         $Query=mysqli_query($conn, $Sql);
         $row = mysqli_fetch_object($Query);
-
         $sisa = $row->num_jml_sisa - 1;
         $peserta = $row->num_jml_peserta + 1;
 
