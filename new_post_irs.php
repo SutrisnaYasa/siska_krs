@@ -129,7 +129,7 @@
 
 // End Cek Jam dan Hari DONE
 
-// Cek Matakuliah Project Techno
+// Jika Mengambil Makul Project Techno(SP1703) Harus Sudah ikut BSC
     if ('SP1703' == $kd_mk_p) {
         $Sql = "select * from aka_syarat where str_id_nim = '" . $str_id_nim . "'";
         $checkTechnoSql = "SELECT * FROM aka_nilai WHERE str_id_nim = '" . $str_id_nim . "' AND str_na NOT IN ('C-','D','E')  AND str_kd_mk IN (SELECT str_kd_mk_syarat FROM aka_matakuliah_syarat WHERE str_kd_mk = 'SP1703') ";
@@ -146,7 +146,7 @@
     }else {
         $Err5 = '5';
     }
-// End Cek Matakuliah Project Techno DONE
+// End Cek Mengambil Makul Project Techno(SP1703) Harus Sudah ikut BSC DONE
      
 if($Err = '1'){
     if($Err3 == '3'){
