@@ -1,27 +1,28 @@
 <?php
    require_once("./koneksi.php");
 
-   // Mengambil request
+// Mengambil request
    $str_id_nim = $_POST['str_id_nim'];
    $int_kd_perkuliahan_d = $_POST['int_kd_perkuliahan_d'];
-   // Akhir Mengambil request
+// Akhir Mengambil request
 
-// Query select data IRS
+// Query select data kursi masing masing kelas
    $Sql = "SELECT num_jml_sisa,num_jml_peserta from aka_perkuliahan_detail
    where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) . "' ";
-// End Query select data IRS
 
-// Query Update data jumlah kursi
-   $Query = mysqli_query($conn, $Sql);
-   $row = mysqli_fetch_object($Query);
-   $sisa = $row->num_jml_sisa + 1;
-   $peserta = $row->num_jml_peserta - 1;
+    // Query Update data jumlah kursi
+    $Query = mysqli_query($conn, $Sql);
+    $row = mysqli_fetch_object($Query);
+    $sisa = $row->num_jml_sisa + 1;
+    $peserta = $row->num_jml_peserta - 1;
 
-   $inSql = "UPDATE aka_perkuliahan_detail set num_jml_sisa = '{$sisa}',num_jml_peserta = '{$peserta}'
-   where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) . "' ";
+    $inSql = "UPDATE aka_perkuliahan_detail set num_jml_sisa = '{$sisa}',num_jml_peserta = '{$peserta}'
+    where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) . "' ";
 
-   $queryUpdate = mysqli_query($conn, $inSql);
-// End Query Update data jumlah kursi
+    $queryUpdate = mysqli_query($conn, $inSql);
+    // End Query Update data jumlah kursi
+
+// End Query select data kursi masing masing kelas
 
 // Query Delete data IRS
     $Sql = "DELETE from aka_krs where str_id_nim = '" . $str_id_nim . "'
