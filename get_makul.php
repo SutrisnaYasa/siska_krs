@@ -5,7 +5,20 @@
     $nim=$_GET['nim']; //2101030009
 // Akhir Mengambil request
 
-// // Akhir dari Mengambil status FINAL atau Belum FINAL KRS
+// Query mengambil status FINAL atau Belum FINAL KRS
+    $status = false;
+    $perintah = "SELECT str_kd_perwalian, bol_final FROM aka_krs WHERE str_id_nim='" . $nim . "' AND str_thn_ajaran=(SELECT str_thn_ajaran_krs FROM pablic_reset LIMIT 1) AND bol_semester=(SELECT bol_semester_krs FROM pablic_reset LIMIT 1)";
+    $Query = mysqli_query($conn, $perintah);
+    while ($rowStatus = mysqli_fetch_object($Query)) {
+        if(true == $rowStatus->bol_final) {
+            $status = true;
+        }else {
+            $status = false;
+        }
+
+    };
+    // var_dump($status);
+// Akhir dari Mengambil status FINAL atau Belum FINAL KRS
 
 // Query mengambil data angkatan MHS
 
@@ -119,4 +132,6 @@ if ('3' == $uDataceksp->num_kd_sms_krs) {
 
 // Akhir Query untuk menampilkan Kelas yang dibuka
 
+
+mysqli_close($conn);
 ?>
