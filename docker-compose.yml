@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  php-apache-environment:
+    container_name: siska_krs
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db_krs
+    volumes:
+      - ./src:/var/www/html/
+    ports:
+      - 8000:80
+
+  db_krs:
+    container_name: db_krs
+    image: mysql
+    command: mysqld --sql_mode=""
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: siskakrs
+      MYSQL_DATABASE: siska
+      MYSQL_USER: siska
+      MYSQL_PASSWORD: siska
+    ports:
+      - "9906:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '8080:80'
+    restart: always
+    environment:
+      PMA_HOST: db_krs
+    depends_on:
+      - db_krs
