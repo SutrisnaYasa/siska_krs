@@ -2,8 +2,8 @@
    require_once("./koneksi.php");
 
 // Mengambil request
-   $str_id_nim = $_POST['str_id_nim'];
-   $int_kd_perkuliahan_d = $_POST['int_kd_perkuliahan_d'];
+   $str_id_nim = $_GET['str_id_nim'];
+   $int_kd_perkuliahan_d = $_GET['int_kd_perkuliahan_d'];
 // Akhir Mengambil request
 
 // Query select data kursi masing masing kelas
