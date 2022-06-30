@@ -16,6 +16,7 @@
   $thnajaran_dash = $thn_ajaran[0] . '-' . $thn_ajaran[1];
   $sms = $sData->num_kd_sms_krs;
   $bol_semester = $sData->bol_semester_krs;
+
 // End Cek Master Pablic Reset
 
 // Cek data Transaksi
@@ -34,18 +35,18 @@
 // End Cek data Mahasiswa
 
 // Penangguhan
-  $penangguhan = "SELECT int_penangguhan FROM keu_jml_biaya where bol_semester = '0' and str_thn_ajaran = '2020-2021' and str_id_nim = '$nim'";
+  $penangguhan = "SELECT int_penangguhan FROM keu_jml_biaya where bol_semester = '0' and str_thn_ajaran = '2021-2022' and str_id_nim = '$nim'";
 
   $mhsPen = mysqli_query($conn, $penangguhan);
   $queryPenangguhan = mysqli_fetch_object($mhsPen);
-
+  
   if ('1' === $queryPenangguhan->int_penangguhan) {
       echo 'boleh krs';
   } else {
       if ($bol_semester == 'SP') {
           echo 'krs sp';
       } else {
-          $pembayaran = "SELECT * FROM `keu_total_spp` WHERE bol_semester like '%" . $bol_semester . "%' AND str_thn_ajaran = '" . $thn_ajaran . "' AND str_id_nim = '" . $nim . "'";
+          $pembayaran = "SELECT * FROM keu_total_spp WHERE bol_semester like '%" . $bol_semester . "%' AND str_thn_ajaran = '" . $thn_ajaran[0] . "' AND str_id_nim = '" . $nim . "'";
           $quePem = mysqli_query($conn, $pembayaran);
           $biaya = mysqli_fetch_object($quePem);
 
@@ -61,8 +62,8 @@
           }
           $angsuranMinimal = 0.25 * $angsuran;
           if ('1' != $keterangan) {
-              if ($total >= $angsuranMinimal) {
-                  echo 'krs dibuka';
+              if ($akumulasi >= $angsuranMinimal) {
+                  echo 'krs dibuka2';
               } else {
                   echo 'akses ditolak';
               }
