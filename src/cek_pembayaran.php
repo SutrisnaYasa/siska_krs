@@ -46,7 +46,7 @@
       if ($bol_semester == 'SP') {
           echo 'krs sp';
       } else {
-          $pembayaran = "SELECT * FROM keu_total_spp WHERE bol_semester like '%" . $bol_semester . "%' AND str_thn_ajaran = '" . $thn_ajaran[0] . "' AND str_id_nim = '" . $nim . "'";
+          $pembayaran = "SELECT * FROM keu_total_spp WHERE bol_semester like '%" . $bol_semester . "%' AND str_thn_ajaran = '" . $thnajaran. "' AND str_id_nim = '" . $nim . "'";
           $quePem = mysqli_query($conn, $pembayaran);
           $biaya = mysqli_fetch_object($quePem);
 
