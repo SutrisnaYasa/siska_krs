@@ -97,9 +97,15 @@
 
 // Cek tanggal KRS dibuka atau ditutup
     if ($paymentDate >= $contractDateBegin && $paymentDate <= $contractDateEnd) {
-      echo 'krs dibuka';
+        echo json_encode([
+          'status'=>true,
+          'message'=>'KRS Dibuka'
+        ]);
     } else {
-      echo 'krs ditutup';
+      echo json_encode([
+        'status'=>false,
+        'message'=>'KRS Belum Dibuka'
+      ]);
     }
 // End Cek tanggal KRS dibuka atau ditutup
    mysqli_close($conn);

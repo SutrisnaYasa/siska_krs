@@ -41,10 +41,16 @@
   $queryPenangguhan = mysqli_fetch_object($mhsPen);
   
   if ('1' === $queryPenangguhan->int_penangguhan) {
-      echo 'boleh krs';
+      echo json_encode([
+        'status'=>true,
+        'message'=>'KRS Dibuka'
+      ]);
   } else {
       if ($bol_semester == 'SP') {
-          echo 'krs sp';
+          echo json_encode([
+            'status'=>true,
+            'message'=>'KRS SP'
+          ]);
       } else {
           $pembayaran = "SELECT * FROM keu_total_spp WHERE bol_semester like '%" . $bol_semester . "%' AND str_thn_ajaran = '" . $thnajaran. "' AND str_id_nim = '" . $nim . "'";
           $quePem = mysqli_query($conn, $pembayaran);
@@ -63,12 +69,21 @@
           $angsuranMinimal = 0.25 * $angsuran;
           if ('1' != $keterangan) {
               if ($akumulasi >= $angsuranMinimal) {
-                  echo 'krs dibuka2';
+                  echo json_encode([
+                    'status'=>true,
+                    'message'=>'KRS Dibuka'
+                  ]);
               } else {
-                  echo 'akses ditolak';
+                  echo json_encode([
+                    'status'=>false,
+                    'message'=>'Akses Ditolak'
+                  ]);
               }
           } else {
-              echo 'krs dibuka';
+            echo json_encode([
+              'status'=>true,
+              'message'=>'KRS Dibuka'
+            ]);
           }
       }
   }

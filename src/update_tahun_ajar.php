@@ -24,7 +24,7 @@ if($query){
 }
 
 $response = array(
-    'status'=>'OK',
+    'status'=>true,
     'msg'=>$msg
 );
 

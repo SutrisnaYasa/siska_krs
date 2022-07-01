@@ -141,7 +141,7 @@
         $cek2=mysqli_num_rows($technoQuery);
 
         if ($cek1 < 1 && $cek2 < 1){
-            echo $Err5 = 'Mata kuliah tidak dapat di ambil, Syarat harus lulus BSC dan Technopreneur';
+            $Err5 = 'Mata kuliah tidak dapat di ambil, Syarat harus lulus BSC dan Technopreneur';
         }
     }else {
         $Err5 = '5';
@@ -191,7 +191,7 @@ if($Err = '1'){
 
                     // Mengambil respon untuk di encode menjadi JSON
                     $response = array(
-                        'status'=>'OK',
+                        'status'=>true,
                         'msg'=>$msg
                     );
 
@@ -201,19 +201,39 @@ if($Err = '1'){
                     // Akhir add ke tabel aka_krs
                 // End ADD IRS
                 }else{
-                    echo $Err2;
+                    // echo $Err2;
+                    echo json_encode([
+                        'status'=>false,
+                        'message'=> $Err2
+                      ]);
                 }
             }else {
-                echo $Err5;
+                // echo $Err5;
+                echo json_encode([
+                    'status'=>false,
+                    'message'=> $Err5
+                  ]);
             }
         }else {
-            echo $Err4;
+            // echo $Err4;
+            echo json_encode([
+                'status'=>false,
+                'message'=> $Err4
+              ]);
         }
     }else {
-        echo $Err3;
+        // echo $Err3;
+        echo json_encode([
+            'status'=>false,
+            'message'=> $Err3
+          ]);
     }
 } else {
-    echo $Err;
+    // echo $Err;
+    echo json_encode([
+        'status'=>false,
+        'message'=> $Err
+      ]);
 }
 
 // Mengambil jumlah SKS diprogramkan

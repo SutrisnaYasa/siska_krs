@@ -23,7 +23,7 @@
 
     // Mengambil respon untuk di encode menjadi JSON
     $response = array(
-        'status'=>'OK',
+        'status'=>true,
         'msg'=>$msg
     );
 
