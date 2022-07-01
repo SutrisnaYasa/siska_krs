@@ -34,7 +34,7 @@
   $angkatan = $angkatanQuery->str_angkatan;
 // End Cek data Mahasiswa
 
-// Penangguhan
+// Penangguhan & Cek Pembayaran
   $penangguhan = "SELECT int_penangguhan FROM keu_jml_biaya where bol_semester = '0' and str_thn_ajaran = '2021-2022' and str_id_nim = '$nim'";
 
   $mhsPen = mysqli_query($conn, $penangguhan);
@@ -88,7 +88,7 @@
       }
   }
 
-// End Penangguhan
+// End Penangguhan & Cek Pembayaran
 
    mysqli_close($conn);
 ?>

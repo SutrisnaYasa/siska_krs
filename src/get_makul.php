@@ -58,24 +58,6 @@
     $resultSP=mysqli_query($conn, $queryceksp);
     $uDataceksp = mysqli_fetch_object($resultSP);
     
-    // $datasp = $uDataceksp->num_kd_sms_krs;
-
-    // $cek = mysqli_num_rows($resultAngkatan);
-    // if ($cek > 0) {
-    //     $uQuery = "SELECT * FROM users where username='$nim'";
-    //     $userQue = mysqli_query($conn, $uQuery);
-    //     $uData = mysqli_fetch_object($userQue);
-    //     if ('3' == $uDataceksp->num_kd_sms_krs) {
-    //         $xfil = "AND a.str_kd_prodi in ({$fProdi})";
-    //     } else {
-    //         $xfil = "AND b.int_kd_kelas in ({$inKls})
-    //         AND a.str_kd_prodi in ({$fProdi})";
-    //     }
-    // } elseif (!empty($_GET['nim'])) {
-    //     $xfil = 'AND b.int_kd_kelas in (0001,0004,0006,0007)
-    //     AND a.str_kd_prodi in (1)';
-    // }  
-
 // Akhir Cek Semester SP
    
 // Query untuk menampilkan Kelas yang dibuka
