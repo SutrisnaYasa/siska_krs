@@ -1,13 +1,16 @@
 <?php
    require_once("./koneksi.php");
+
 // Allow Cors (*)
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: GET, POST');
     header("Access-Control-Allow-Headers: X-Requested-With");
 // End Allow Cors (*)
 
+// Mengambil Request
    $str_id_nim = $_POST['str_id_nim'];
    $int_kd_perkuliahan_d = $_POST['int_kd_perkuliahan_d'];
+// End Mengambil Request
 
 // Mengambil Pablic_reset
    $query = "SELECT * from pablic_reset";
@@ -15,8 +18,13 @@
    $result=mysqli_query($conn, $query);
    $Data = mysqli_fetch_object($result);
 
-   $thn_ajaran = explode('/', $Data->str_thn_ajaran_krs);
-   $sms = $Data->num_kd_sms_krs;
+    //    $thn_ajaran = explode('/', $Data->str_thn_ajaran_krs);
+    //    $sms = $Data->num_kd_sms_krs;
+    $thn_ajaran = explode('/', $Data->str_thn_ajaran_krs);
+    $thnajaran = $thn_ajaran[0] . '/' . $thn_ajaran[1];
+    $thnajaran_dash = $thn_ajaran[0] . '-' . $thn_ajaran[1];
+    $sms = $Data->num_kd_sms_krs;
+    $bol_semester = $Data->bol_semester_krs;
 
    // Generate str_kd_perwalian
    $kode = $str_id_nim . $thn_ajaran[0] . $thn_ajaran[1] . $sms;
@@ -37,10 +45,93 @@
     $kd_mk_p = $srow->str_kd_mk;
 // End Select yang di perlukan
 
+// Mengecek Masa IRS
+    // Query untuk mengambil data dari tabel tahun ajar
+    $sql = "SELECT * FROM tahun_ajar where status ='1'";
+    $query = mysqli_query($conn, $sql);
+    $data = mysqli_fetch_array($query);
+    // Query untuk mengambil data dari tabel tahun ajar
+
+    // Cek tanggal mulai, tanggal akhir, dan tanggal saat ini
+    $today=date ("Y-m-d");
+    $tanggal_mulai = strtotime($data["tanggal_mulai"]);
+    $tgl_today = strtotime($today);
+    $tanggal_akhir = strtotime($data["tanggal_akhir"]);
+    $cek_stts = $data["status"];
+    if ($tgl_today < $tanggal_mulai){
+        $ErrMasa = 'KRS belum dibuka';
+    }else if ($tgl_today > $tanggal_akhir){
+        $ErrMasa = 'KRS telah ditutup';
+    }else if($tgl_today >= $tanggal_mulai && $tgl_today <= $tanggal_akhir && $cek_stts === '1'){
+        $ErrMasa = 'KRS';
+    } else {
+        $ErrMasa = 'Tanggal tidak ditemukan';
+    }
+    // Cek tanggal mulai, tanggal akhir, dan tanggal saat ini
+// Mengecek Masa IRS
+
+// Mengecek Pembayaran
+  // Cek data Transaksi
+    $tSql = "SELECT SUM(jml_trans_bayar) as jml_trans_bayar FROM keu_transaksi WHERE str_id_nim = '$str_id_nim' AND str_thn_ajaran = '{$thnajaran}' AND bol_semester = '{$bol_semester}'";
+
+    $tQuery = mysqli_query($conn, $tSql);
+    $tData = mysqli_fetch_object($tQuery);
+    $akumulasi = $tData->jml_trans_bayar;
+    // End Cek data Transaksi
+
+    // Cek data Mahasiswa
+    $sql = "SELECT * from mhs_mahasiswa where str_id_nim='" . $str_id_nim . "' ";
+    $mhsQue = mysqli_query($conn, $sql);
+    $angkatanQuery = mysqli_fetch_object($mhsQue);
+    $angkatan = $angkatanQuery->str_angkatan;
+    // End Cek data Mahasiswa
+
+    // Penangguhan & Cek Pembayaran
+    $penangguhan = "SELECT int_penangguhan FROM keu_jml_biaya where bol_semester = '" . $sms. "' and str_thn_ajaran = '" . $thnajaran_dash. "' and str_id_nim = '$str_id_nim'";
+
+    $mhsPen = mysqli_query($conn, $penangguhan);
+    $queryPenangguhan = mysqli_fetch_object($mhsPen);
+    
+    if ('1' === $queryPenangguhan->int_penangguhan) {
+        $ErrPembayaran = 'KRSPembayaran';
+    } else {
+        if ($bol_semester == 'SP') {
+            $ErrPembayaran = 'KRSPembayaran';
+        } else {
+            $pembayaran = "SELECT * FROM keu_total_spp WHERE bol_semester like '%" . $bol_semester . "%' AND str_thn_ajaran = '" . $thnajaran. "' AND str_id_nim = '" . $str_id_nim . "'";
+            $quePem = mysqli_query($conn, $pembayaran);
+            $biaya = mysqli_fetch_object($quePem);
+
+            if (!empty($biaya->int_total_biaya)) {
+                $angsuran = $biaya->int_total_biaya;
+            } else {
+                $angsuran = 1;
+            }
+            if (!empty($biaya->str_keterangan)) {
+                $keterangan = $biaya->bol_beasiswa;
+            } else {
+                $keterangan = '0';
+            }
+            $angsuranMinimal = 0.25 * $angsuran;
+            if ('1' != $keterangan) {
+                if ($akumulasi >= $angsuranMinimal) {
+                    $ErrPembayaran = 'KRSPembayaran';
+                } else {
+                    $ErrPembayaran = 'Silahkan Lunasi Pembayaran atau Menghubungi Bagian Keuangan';
+                }
+            } else {
+                $ErrPembayaran = 'KRSPembayaran';
+            }
+        }
+    }
+
+    // End Penangguhan & Cek Pembayaran
+// End Mengecek Pembayaran
+
 // Cek matakuliah syarat
     $angkatan = substr($str_id_nim, 0, 4);
     if('UM1714' == $kd_mk_p and $angkatan <= '2014') {
-       $Err = '';
+       $Err = '1';
     } else {
         $ssSql = "SELECT * FROM aka_nilai where str_id_nim = '" . $str_id_nim . "' and str_kd_mk in (SELECT str_kd_mk_syarat FROM
         aka_matakuliah_syarat WHERE str_kd_mk = '" . $kd_mk_p . "')";
@@ -153,92 +244,106 @@
     }
 // End Cek Mengambil Makul Project Techno(SP1703) Harus Sudah ikut BSC DONE
      
-if($Err = '1'){
-    if($Err3 == '3'){
-        if($Err4 == ''){
-            if($Err5 == '5'){
-                if($Err2 == '2'){
-                    // ADD IRS
-                    // Menampilkan seluruh data POST
-                    foreach ($_POST as $param_name => $param_val) {
-                        if ($param_name == "str_id_nim"){
-                            $str_id_nim = $param_val;
+if($ErrMasa == 'KRS'){
+    if($ErrPembayaran == 'KRSPembayaran'){
+        if($Err = '1'){
+            if($Err3 == '3'){
+                if($Err4 == ''){
+                    if($Err5 == '5'){
+                        if($Err2 == '2'){
+                            // ADD IRS
+                            // Menampilkan seluruh data POST
+                            foreach ($_POST as $param_name => $param_val) {
+                                if ($param_name == "str_id_nim"){
+                                    $str_id_nim = $param_val;
+                                }
+                                else if($param_name == "int_kd_perkuliahan_d"){
+                                    $int_kd_perkuliahan_d = $param_val;
+                                }
+                                else if($param_name == "str_kd_perwalian"){
+                                    $str_kd_perwalian = $param_val;
+                                }
+                                else if($param_name == "tgljam_perwalian"){
+                                    $tgljam_perwalian = $param_val;
+                                }
+                                else if($param_name == "str_tahun_ajaran"){
+                                    $str_tahun_ajaran = $param_val;
+                                }
+                                else {
+                                    $bol_semester = $param_val;
+                                }
+                            }
+                            // Akhir Menampilkan seluruh data POST
+        
+                            // Query add ke tabel aka_krs
+                            $sql = "INSERT INTO aka_krs (str_id_nim,int_kd_perkuliahan_d,str_kd_perwalian,tgljam_perwalian,str_thn_ajaran,bol_semester) VALUES ('" . $str_id_nim . "','" . $int_kd_perkuliahan_d . "','" . $kode . "','',(SELECT str_thn_ajaran_krs FROM pablic_reset) ,(SELECT bol_semester_krs FROM pablic_reset) )";
+        
+                            //Running Query
+                            $query = mysqli_query($conn, $sql);
+                            if($query) {
+                                $msg = "Simpan Data IRS Berhasil";
+                            }else{
+                                $msg = "Simpan Data IRS Gagal";
+                            }
+                            // End Running Query
+        
+                            // Mengambil respon untuk di encode menjadi JSON
+                            $response = array(
+                                'status'=>true,
+                                'msg'=>$msg
+                            );
+        
+                            // ENCODE menjadi data JSON
+                            echo json_encode($response);
+        
+                            // Akhir add ke tabel aka_krs
+                        // End ADD IRS
+                        }else{
+                            // echo $Err2;
+                            echo json_encode([
+                                'status'=>false,
+                                'message'=> $Err2
+                              ]);
                         }
-                        else if($param_name == "int_kd_perkuliahan_d"){
-                            $int_kd_perkuliahan_d = $param_val;
-                        }
-                        else if($param_name == "str_kd_perwalian"){
-                            $str_kd_perwalian = $param_val;
-                        }
-                        else if($param_name == "tgljam_perwalian"){
-                            $tgljam_perwalian = $param_val;
-                        }
-                        else if($param_name == "str_tahun_ajaran"){
-                            $str_tahun_ajaran = $param_val;
-                        }
-                        else {
-                            $bol_semester = $param_val;
-                        }
+                    }else {
+                        // echo $Err5;
+                        echo json_encode([
+                            'status'=>false,
+                            'message'=> $Err5
+                          ]);
                     }
-                    // Akhir Menampilkan seluruh data POST
-
-                    // Query add ke tabel aka_krs
-                    $sql = "INSERT INTO aka_krs (str_id_nim,int_kd_perkuliahan_d,str_kd_perwalian,tgljam_perwalian,str_thn_ajaran,bol_semester) VALUES ('" . $str_id_nim . "','" . $int_kd_perkuliahan_d . "','" . $kode . "','',(SELECT str_thn_ajaran_krs FROM pablic_reset) ,(SELECT bol_semester_krs FROM pablic_reset) )";
-
-                    //Running Query
-                    $query = mysqli_query($conn, $sql);
-                    if($query) {
-                        $msg = "Simpan Data IRS Berhasil";
-                    }else{
-                        $msg = "Simpan Data IRS Gagal";
-                    }
-                    // End Running Query
-
-                    // Mengambil respon untuk di encode menjadi JSON
-                    $response = array(
-                        'status'=>true,
-                        'msg'=>$msg
-                    );
-
-                    // ENCODE menjadi data JSON
-                    echo json_encode($response);
-
-                    // Akhir add ke tabel aka_krs
-                // End ADD IRS
-                }else{
-                    // echo $Err2;
+                }else {
+                    // echo $Err4;
                     echo json_encode([
                         'status'=>false,
-                        'message'=> $Err2
+                        'message'=> $Err4
                       ]);
                 }
             }else {
-                // echo $Err5;
+                // echo $Err3;
                 echo json_encode([
                     'status'=>false,
-                    'message'=> $Err5
+                    'message'=> $Err3
                   ]);
             }
-        }else {
-            // echo $Err4;
+        } else {
+            // echo $Err;
             echo json_encode([
                 'status'=>false,
-                'message'=> $Err4
-              ]);
+                'message'=> $Err
+            ]);
         }
-    }else {
-        // echo $Err3;
+    } else {
         echo json_encode([
             'status'=>false,
-            'message'=> $Err3
-          ]);
+            'message'=> $ErrPembayaran
+        ]);
     }
 } else {
-    // echo $Err;
     echo json_encode([
         'status'=>false,
-        'message'=> $Err
-      ]);
+        'message'=> $ErrMasa
+    ]);
 }
 
 mysqli_close($conn);
