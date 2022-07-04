@@ -1,5 +1,10 @@
 <?php
    require_once("./koneksi.php");
+// Allow Cors (*)
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST');
+    header("Access-Control-Allow-Headers: X-Requested-With");
+// End Allow Cors (*)
 
 // Mengambil request
     $nim=$_GET['nim']; //2101030009

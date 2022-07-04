@@ -1,5 +1,10 @@
 <?php
    require_once("./koneksi.php");
+// Allow Cors (*)
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST');
+    header("Access-Control-Allow-Headers: X-Requested-With");
+// End Allow Cors (*)
 
    $str_id_nim = $_POST['str_id_nim'];
    $int_kd_perkuliahan_d = $_POST['int_kd_perkuliahan_d'];
