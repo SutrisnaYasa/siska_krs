@@ -46,20 +46,15 @@
 // End Mengambil data Komentar
 
 // Mengambil nama pembimbing PA
-  $sSql = "SELECT a.* from uni_karidos a, aka_group_wali b, mhs_mahasiswa c where a.str_id_kad = b.str_kd_dosen_wali_d AND b.int_id_group_wali= c.int_id_group_wali AND c.str_id_nim =  ' . $nim . ' "; 
+  // Dosen PA 1
+  $sSql = "SELECT a.* from uni_karidos a, aka_group_wali b, mhs_mahasiswa c where a.str_id_kad = b.str_kd_dosen_wali_aktif AND b.int_id_group_wali= c.int_id_group_wali AND c.str_id_nim =  '" . $nim . "' ";
   $qQuery = mysqli_query($conn, $sSql);
-  // $data['DataKadD'] = mysqli_fetch_object($qQuery);
-  while ($data = mysqli_fetch_object($qQuery)) {
-    $data->aka_group_wali;
-  };
+  $data = mysqli_fetch_object($qQuery);
 
-
-  $sSql = "SELECT a.* from uni_karidos a, aka_group_wali b, mhs_mahasiswa c where a.str_id_kad = b.str_kd_dosen_wali_aktif AND b.int_id_group_wali= c.int_id_group_wali AND c.str_id_nim =  ' . $nim . ' ";
+  // Dosen PA 2
+  $sSql = "SELECT a.* from uni_karidos a, aka_group_wali b, mhs_mahasiswa c where a.str_id_kad = b.str_kd_dosen_wali_d AND b.int_id_group_wali= c.int_id_group_wali AND c.str_id_nim =  '" . $nim . "' "; 
   $qQuery = mysqli_query($conn, $sSql);
-  // $data['DataKadAktif'] = mysqli_fetch_object($qQuery);
-  while ($data = mysqli_fetch_object($qQuery)) {
-    $data->aka_group_wali;
-  };
+  $data2 = mysqli_fetch_object($qQuery);
 
 // End Mengambil nama pembimbing PA
 
@@ -88,7 +83,7 @@
       $ttlSKS = mysqli_fetch_object($aQuery);
 
       $msg = $ttlSKS->totalSKS;
-      echo $msg;
+      // echo $msg;
 // End Mengambil jumlah SKS diprogramkan
 
 // Setup tanggal buka dan tutup KRS
