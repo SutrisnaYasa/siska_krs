@@ -46,23 +46,16 @@
 // End Select yang di perlukan
 
 // Mengecek Masa IRS
-    // Query untuk mengambil data dari tabel tahun ajar
-    $sql = "SELECT * FROM tahun_ajar where status ='1'";
-    $query = mysqli_query($conn, $sql);
-    $data = mysqli_fetch_array($query);
-    // Query untuk mengambil data dari tabel tahun ajar
-
     // Cek tanggal mulai, tanggal akhir, dan tanggal saat ini
     $today=date ("Y-m-d");
-    $tanggal_mulai = strtotime($data["tanggal_mulai"]);
+    $tanggal_mulai = strtotime('2022-06-25');
     $tgl_today = strtotime($today);
-    $tanggal_akhir = strtotime($data["tanggal_akhir"]);
-    $cek_stts = $data["status"];
+    $tanggal_akhir = strtotime('2022-07-05');
     if ($tgl_today < $tanggal_mulai){
         $ErrMasa = 'KRS belum dibuka';
     }else if ($tgl_today > $tanggal_akhir){
         $ErrMasa = 'KRS telah ditutup';
-    }else if($tgl_today >= $tanggal_mulai && $tgl_today <= $tanggal_akhir && $cek_stts === '1'){
+    }else if($tgl_today >= $tanggal_mulai && $tgl_today <= $tanggal_akhir){
         $ErrMasa = 'KRS';
     } else {
         $ErrMasa = 'Tanggal tidak ditemukan';
