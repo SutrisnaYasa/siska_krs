@@ -17,14 +17,12 @@
 
    $result=mysqli_query($conn, $query);
    $Data = mysqli_fetch_object($result);
-
-    //    $thn_ajaran = explode('/', $Data->str_thn_ajaran_krs);
-    //    $sms = $Data->num_kd_sms_krs;
-    $thn_ajaran = explode('/', $Data->str_thn_ajaran_krs);
-    $thnajaran = $thn_ajaran[0] . '/' . $thn_ajaran[1];
-    $thnajaran_dash = $thn_ajaran[0] . '-' . $thn_ajaran[1];
-    $sms = $Data->num_kd_sms_krs;
-    $bol_semester = $Data->bol_semester_krs;
+    
+   $thn_ajaran = explode('/', $Data->str_thn_ajaran_krs);
+   $thnajaran = $thn_ajaran[0] . '/' . $thn_ajaran[1];
+   $thnajaran_dash = $thn_ajaran[0] . '-' . $thn_ajaran[1];
+   $sms = $Data->num_kd_sms_krs;
+   $bol_semester = $Data->bol_semester_krs;
 
    // Generate str_kd_perwalian
    $kode = $str_id_nim . $thn_ajaran[0] . $thn_ajaran[1] . $sms;
