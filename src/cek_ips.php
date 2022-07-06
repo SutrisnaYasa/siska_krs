@@ -48,15 +48,16 @@
 
     if ($lastElement >= 3.25 && $msg < 24) {
         echo '24 SKS';
-    } elseif($lastElement <= 2.75 && $msg < 21) {
+    }else if( 2.75 <= $lastElement && $lastElement < 3.25 && $msg < 21){
         echo '21 SKS';
-    } elseif($lastElement <= 2.00 && $msg < 28 ) {
+    }else if( 2.00 <= $lastElement && $lastElement < 2.75 && $msg < 18){
         echo '18 SKS';
-    } elseif($lastElement <= 2.00 && $msg < 15) {
+    }else if($lastElement < 2.00 && $msg < 15){
         echo '15 SKS';
-    } else{
-        echo 'IPS anda kurang dari 2.00';
+    }else{
+        echo 'Maaf Maksimal SKS yang bisa anda tempuh adalah'.' '.$msg.' '.'SKS';
     }
+
                           
 mysqli_close($conn);
 ?>
