@@ -175,16 +175,12 @@
 
     // Melakukan pengecekan ips dan sks yang diambil
         if ($lastElement >= 3.25 && $msg < 24) {
-            $tot = '24';
             $ErrIps = 'IPS';
         }else if( 2.75 <= $lastElement && $lastElement < 3.25 && $msg < 21){
-            $tot = '21';
             $ErrIps = 'IPS';
         }else if( 2.00 <= $lastElement && $lastElement < 2.75 && $msg < 18){
-            $tot = '18';
             $ErrIps = 'IPS';
         }else if($lastElement < 2.00 && $msg < 15){
-            $tot = '15';
             $ErrIps = 'IPS';
         }else{
             $ErrIps = 'Maaf, Tidak Bisa Mengambil Mata Kuliah Lagi' ;
