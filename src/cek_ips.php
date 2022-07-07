@@ -60,7 +60,7 @@
             echo $tot = '15 SKS';
             echo $msg;
         }else{
-            echo 'Maaf Maksimal SKS yang bisa anda tempuh adalah'.' '.$tot.' '.'SKS dan Jumlah SKS yang sudah anda ambil adalah'.' '.$msg ;
+            echo 'Maaf, Tidak Bisa Mengambil Mata Kuliah karena Maksimal SKS anda'.' '.$msg ;
         }
     // End Melakukan pengecekan ips dan sks yang diambil
 // End Melakukan Pengecekan IPS dan SKS yang Bisa Diambil     
