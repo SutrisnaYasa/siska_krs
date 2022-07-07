@@ -187,7 +187,7 @@
             $tot = '15';
             $ErrIps = 'IPS';
         }else{
-            $ErrIps = 'Maaf, Tidak Bisa Mengambil Mata Kuliah karena Maksimal SKS anda'.' '.$msg ;
+            $ErrIps = 'Maaf, Tidak Bisa Mengambil Mata Kuliah Lagi' ;
         }
     // End Melakukan pengecekan ips dan sks yang diambil
 // End Melakukan Pengecekan IPS dan SKS yang Bisa Diambil     
