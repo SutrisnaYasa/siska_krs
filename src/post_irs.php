@@ -10,6 +10,7 @@
 // Mengambil Request
    $str_id_nim = $_POST['str_id_nim'];
    $int_kd_perkuliahan_d = $_POST['int_kd_perkuliahan_d'];
+   $sks=$_GET['num_sks'];
 // End Mengambil Request
 
 // Mengambil Pablic_reset
@@ -173,14 +174,18 @@
         $msg = $ttlSKS->totalSKS;
     // End Mengambil jumlah SKS diprogramkan
 
+        // Menambahkan jumlah sks yang akan diambil dengan sks yg sudah diambil
+        $plusSks = $msg + $sks;
+        // End Menambahkan jumlah sks yang akan diambil dengan sks yg sudah diambil
+
     // Melakukan pengecekan ips dan sks yang diambil
-        if ($lastElement >= 3.25 && $msg < 24) {
+        if ($lastElement >= 3.25 && $plusSks <= 24) {
             $ErrIps = 'IPS';
-        }else if( 2.75 <= $lastElement && $lastElement < 3.25 && $msg < 21){
+        }else if( 2.75 <= $lastElement && $lastElement < 3.25 && $plusSks <= 21){
             $ErrIps = 'IPS';
-        }else if( 2.00 <= $lastElement && $lastElement < 2.75 && $msg < 18){
+        }else if( 2.00 <= $lastElement && $lastElement < 2.75 && $plusSks <= 18){
             $ErrIps = 'IPS';
-        }else if($lastElement < 2.00 && $msg < 15){
+        }else if($lastElement < 2.00 && $plusSks <= 15){
             $ErrIps = 'IPS';
         }else{
             $ErrIps = 'Maaf, Tidak Bisa Mengambil Mata Kuliah Lagi' ;

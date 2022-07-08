@@ -3,6 +3,7 @@
 
 // Mengambil request
     $str_id_nim=$_GET['str_id_nim']; //2101030009
+    $sks=$_GET['num_sks'];
 // Akhir Mengambil request
 
 // Melakukan Pengecekan IPS dan SKS yang Bisa Diambil
@@ -46,17 +47,19 @@
         $msg = $ttlSKS->totalSKS;
     // End Mengambil jumlah SKS diprogramkan
 
+    $plusSks = $msg + $sks;
+    var_dump($plusSks);
     // Melakukan pengecekan ips dan sks yang diambil
-        if ($lastElement >= 3.25 && $msg < 24) {
+        if ($lastElement >= 3.25 && $plusSks <= 24) {
             echo $tot = '24 SKS';
             echo $msg;
-        }else if( 2.75 <= $lastElement && $lastElement < 3.25 && $msg < 21){
+        }else if( 2.75 <= $lastElement && $lastElement < 3.25 && $plusSks <= 21){
             echo $tot = '21 SKS';
             echo $msg;
-        }else if( 2.00 <= $lastElement && $lastElement < 2.75 && $msg < 18){
+        }else if( 2.00 <= $lastElement && $lastElement < 2.75 && $plusSks <= 18){
             echo $tot = '18 SKS';
             echo $msg;
-        }else if($lastElement < 2.00 && $msg < 15){
+        }else if($lastElement < 2.00 && $plusSks <= 15){
             echo $tot = '15 SKS';
             echo $msg;
         }else{
