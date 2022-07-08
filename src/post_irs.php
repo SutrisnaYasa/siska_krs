@@ -352,7 +352,7 @@ if($ErrMasa == 'KRS'){
                                     // Mengambil respon untuk di encode menjadi JSON
                                     $response = array(
                                         'status'=>true,
-                                        'msg'=>$msg
+                                        'message'=>$msg
                                     );
                 
                                     // ENCODE menjadi data JSON
