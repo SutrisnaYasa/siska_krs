@@ -7,8 +7,8 @@
 // End Allow Cors (*)
 
 // Mengambil request
-   $str_id_nim = $_GET['str_id_nim'];
-   $int_kd_perkuliahan_d = $_GET['int_kd_perkuliahan_d'];
+   $str_id_nim = $_POST['str_id_nim'];
+   $int_kd_perkuliahan_d = $_POST['int_kd_perkuliahan_d'];
 // Akhir Mengambil request
 
 // Query select data kursi masing masing kelas
@@ -34,10 +34,19 @@
     and int_kd_perkuliahan_d = '" . $int_kd_perkuliahan_d . "' and str_thn_ajaran = (SELECT str_thn_ajaran_krs FROM pablic_reset)  and bol_semester = (SELECT bol_semester_krs FROM pablic_reset)  ";
 
     $queryDelete = mysqli_query($conn, $Sql);
-    $msg['success'] = true;
-// End Query Delete data IRS
+    if($queryDelete) {
+        $msg = "Delete Data IRS Berhasil";
+    }else{
+        $msg = "Delete Data IRS Gagal";
+    }
 
-    echo json_encode($msg);        
+    $response = array(
+        'status'=>true,
+        'message'=>$msg
+    );
+
+    echo json_encode($response);  
+// End Query Delete data IRS
 
     mysqli_close($conn);
 ?>

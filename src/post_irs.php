@@ -10,7 +10,7 @@
 // Mengambil Request
    $str_id_nim = $_POST['str_id_nim'];
    $int_kd_perkuliahan_d = $_POST['int_kd_perkuliahan_d'];
-   $sks=$_GET['num_sks'];
+   $sks=$_POST['num_sks'];
 // End Mengambil Request
 
 // Mengambil Pablic_reset
