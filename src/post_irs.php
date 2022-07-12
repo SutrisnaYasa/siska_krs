@@ -104,7 +104,7 @@
             } else {
                 $keterangan = '0';
             }
-            $angsuranMinimal = 0.25 * $angsuran;
+            $angsuranMinimal = 0.5 * $angsuran;
             if ('1' != $keterangan) {
                 if ($akumulasi >= $angsuranMinimal) {
                     $ErrPembayaran = 'KRSPembayaran';
