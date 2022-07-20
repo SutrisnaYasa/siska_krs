@@ -9,8 +9,8 @@
 
 // Mengambil Request
    $str_id_nim = $_GET['str_id_nim'];
-   $int_kd_perkuliahan_d = $_POST['int_kd_perkuliahan_d'];
-   $sks=$_POST['num_sks'];
+   // $int_kd_perkuliahan_d = $_POST['int_kd_perkuliahan_d'];
+   // $sks=$_POST['num_sks'];
 // End Mengambil Request
 
 // Mengambil Pablic_reset
@@ -47,26 +47,41 @@
     // End Cek data Mahasiswa
 
     // Penangguhan & Cek Akumulasi Pembayaran
-    $penangguhan = "SELECT * FROM keu_jml_biaya where bol_semester = '" . $sms. "' and str_thn_ajaran = '" . $thnajaran_dash. "' and str_id_nim = '$str_id_nim'";
+    // Cek biaya SPP
+      $biayaSPP = "SELECT int_nominal FROM keu_jml_biaya where bol_semester = '" . $sms. "' and str_thn_ajaran = '" . $thnajaran_dash. "' and str_id_nim = '$str_id_nim'";
 
-    $mhsPen = mysqli_query($conn, $penangguhan);
-    $queryPenangguhan = mysqli_fetch_object($mhsPen);
-    $biaya_spp = $queryPenangguhan->int_nominal;
+      $mhsSPP = mysqli_query($conn, $biayaSPP);
+      $queryBiayaSPP = mysqli_fetch_object($mhsSPP);
+      $biaya_spp = $queryBiayaSPP;
+    // Cek biaya SPP
 
-    if ('1' === $queryPenangguhan->int_penangguhan) {
-        $ErrPembayaran = 'KRSPembayaran';
+   // Cek penangguhan SPP
+      $penangguhanSPP = "SELECT int_nominal FROM keu_jml_biaya where bol_semester = '" . $sms. "' and str_thn_ajaran = '" . $thnajaran_dash. "' and str_id_nim = '$str_id_nim'";
+
+      $penSPP = mysqli_query($conn, $penangguhanSPP);
+      $queryPenangguhanSPP = mysqli_fetch_object($penSPP);
+      $penangguhan_spp = $queryPenangguhanSPP;
+   // Cek penangguhan SPP
+
+    if ('1' === $penangguhan_spp) {
+      $ErrPembayaran = 'KRSPembayaran';
+   } else {
+          if ($bol_semester == 'SP') {
+              $ErrPembayaran = 'KRSPembayaran';
+          } else {
+              if($akumulasi >= ($biaya_spp * 0.5)) {
+                 echo $ErrPembayaran = 'KRSPembayaran';
+              } else {
+                 echo $ErrPembayaran = 'Silahkan Lunasi Pembayaran atau Menghubungi Bagian Keuangan';
+              }
+          }
+   }
+
+    if($penangguhan_spp !== null && $biaya_spp !== null){
+      echo $ErrPenangguhan = '1';
     } else {
-            if ($bol_semester == 'SP') {
-                $ErrPembayaran = 'KRSPembayaran';
-            } else {
-                if($akumulasi >= ($biaya_spp * 0.5)) {
-                   echo $ErrPembayaran = 'KRSPembayaran';
-                } else {
-                   echo $ErrPembayaran = 'Silahkan Lunasi Pembayaran atau Menghubungi Bagian Keuangan';
-                }
-            }
+      echo $ErrPenangguhan = 'Data tidak ditemukan';
     }
-    
     // End Penangguhan & Cek Akumulasi Pembayaran
 // End Mengecek Pembayaran
 
