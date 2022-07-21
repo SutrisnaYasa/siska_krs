@@ -84,36 +84,36 @@
 
     $mhsSPP = mysqli_query($conn, $biayaSPP);
     $queryBiayaSPP = mysqli_fetch_object($mhsSPP);
-    $biaya_spp = $queryBiayaSPP;
   // Cek biaya SPP
 
  // Cek penangguhan SPP
-    $penangguhanSPP = "SELECT int_nominal FROM keu_jml_biaya where bol_semester = '" . $sms. "' and str_thn_ajaran = '" . $thnajaran_dash. "' and str_id_nim = '$str_id_nim'";
+    $penangguhanSPP = "SELECT int_penangguhan FROM keu_jml_biaya where bol_semester = '" . $sms. "' and str_thn_ajaran = '" . $thnajaran_dash. "' and str_id_nim = '$str_id_nim'";
 
     $penSPP = mysqli_query($conn, $penangguhanSPP);
     $queryPenangguhanSPP = mysqli_fetch_object($penSPP);
-    $penangguhan_spp = $queryPenangguhanSPP;
  // Cek penangguhan SPP
 
-  if ('1' === $penangguhan_spp) {
-    $ErrPembayaran = 'KRSPembayaran';
- } else {
+    
+    if($queryPenangguhanSPP !== null && $queryBiayaSPP !== null){
+        $ErrCekKeuangan = 'ada';
+    } else {
+        error_reporting(0);
+        $ErrCekKeuangan = 'Data Pembayaran tidak ditemukan';
+    }
+
+    if ('1' === $queryPenangguhanSPP->int_penangguhan) {
+        $ErrPembayaran = 'KRSPembayaran';
+    } else {
         if ($bol_semester == 'SP') {
             $ErrPembayaran = 'KRSPembayaran';
         } else {
-            if($akumulasi >= ($biaya_spp * 0.5)) {
-               echo $ErrPembayaran = 'KRSPembayaran';
+            if($akumulasi >= ($queryBiayaSPP->int_nominal * 0.5)) {
+                $ErrPembayaran = 'KRSPembayaran';
             } else {
-               echo $ErrPembayaran = 'Silahkan Lunasi Pembayaran atau Menghubungi Bagian Keuangan';
+                $ErrPembayaran = 'Silahkan Lunasi Pembayaran atau Menghubungi Bagian Keuangan';
             }
         }
- }
-
-  if($penangguhan_spp !== null && $biaya_spp !== null){
-    $ErrCekKeuangan = 'ada';
-  } else {
-    $ErrCekKeuangan = 'Data tidak ditemukan';
-  }
+    }
   // End Penangguhan & Cek Akumulasi Pembayaran
 // End Mengecek Pembayaran
 
