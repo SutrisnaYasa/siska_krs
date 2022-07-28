@@ -10,8 +10,8 @@
 // Mengambil Request
    $str_id_nim = $_POST['str_id_nim'];
    $int_kd_perkuliahan_d = $_POST['int_kd_perkuliahan_d'];
-   $sks=$_POST['num_sks'];
-   $kd_mk_p=$_POST['str_kd_mk'];
+   $sks = $_POST['num_sks'];
+   $kd_mk_p = $_POST['str_kd_mk'];
 //    var_dump($sks);
 // End Mengambil Request
 
@@ -245,11 +245,12 @@
             $ErrSyarat = 'Mata Kuliah Syarat'. ' '.
             $ssRowS->str_nm_mk . ' '. "Tidak Terpenuhi\n";
 
-            // echo $Err;
+            $ErrSyarat;
         };
     } else{
         $ErrSyarat = '1';
     }
+
 // End Cek matakuliah syarat DONE
 
 // Cek sisa kursi
@@ -343,7 +344,7 @@ if($ErrMasa == 'KRS'){
         if($ErrPembayaran == 'KRSPembayaran'){
             if($ErrStts == 'KRSaktif'){
                 if($ErrIps == 'IPS'){
-                    if($ErrSyarat = '1'){
+                    if($ErrSyarat == '1'){
                         if($Err3 == '3'){
                             if($Err4 == ''){
                                 if($Err5 == '5'){
@@ -373,7 +374,7 @@ if($ErrMasa == 'KRS'){
                                         // Akhir Menampilkan seluruh data POST
                     
                                         // Query add ke tabel aka_krs
-                                        $sql = "INSERT INTO aka_krs (str_id_nim,int_kd_perkuliahan_d,str_kd_perwalian,tgljam_perwalian,str_thn_ajaran,bol_semester) VALUES ('" . $str_id_nim . "','" . $int_kd_perkuliahan_d . "','" . $kode . "','',(SELECT str_thn_ajaran_krs FROM pablic_reset) ,(SELECT bol_semester_krs FROM pablic_reset) )";
+                                        $sql = "INSERT INTO aka_krs (str_id_nim,int_kd_perkuliahan_d,str_kd_perwalian,str_thn_ajaran,bol_semester) VALUES ('" . $str_id_nim . "','" . $int_kd_perkuliahan_d . "','" . $kode . "',(SELECT str_thn_ajaran_krs FROM pablic_reset) ,(SELECT bol_semester_krs FROM pablic_reset) )";
                     
                                         //Running Query
                                         $query = mysqli_query($conn, $sql);
