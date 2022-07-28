@@ -304,23 +304,6 @@
             $Err4 = '';
         }
     }
-
-    if('' == $Err4 && $ErrCekKeuangan == 'ada' && $ErrPembayaran == 'KRSPembayaran' && $ErrStts == 'KRSaktif' && $ErrIps == 'IPS' && $ErrSyarat == '1' && $Err3 == '3' && $Err5 == '5' && $Err2 == '2') {
-        $Sql = "SELECT num_jml_sisa,num_jml_peserta from aka_perkuliahan_detail
-        where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) . "' ";
-
-        $Query=mysqli_query($conn, $Sql);
-        $row = mysqli_fetch_object($Query);
-        $sisa = $row->num_jml_sisa - 1;
-        $peserta = $row->num_jml_peserta + 1;
-
-        $inSql = "update aka_perkuliahan_detail set num_jml_sisa = '{$sisa}',num_jml_peserta = '{$peserta}'
-			where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) . "' ";
-
-        $QueryUpdate=mysqli_query($conn, $inSql);
-
-    } 
-
 // End Cek Jam dan Hari DONE
 
 // Jika Mengambil Makul Project Techno(SP1703) Harus Sudah ikut BSC
@@ -341,6 +324,24 @@
         $Err5 = '5';
     }
 // End Cek Mengambil Makul Project Techno(SP1703) Harus Sudah ikut BSC DONE
+
+// Update sisa kursi
+if('' == $Err4 && $ErrCekKeuangan == 'ada' && $ErrPembayaran == 'KRSPembayaran' && $ErrStts == 'KRSaktif' && $ErrIps == 'IPS' && $ErrSyarat == '1' && $Err3 == '3' && $Err5 == '5' && $Err2 == '2') {
+    $Sql = "SELECT num_jml_sisa,num_jml_peserta from aka_perkuliahan_detail
+    where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) . "' ";
+
+    $Query=mysqli_query($conn, $Sql);
+    $row = mysqli_fetch_object($Query);
+    $sisa = $row->num_jml_sisa - 1;
+    $peserta = $row->num_jml_peserta + 1;
+
+    $inSql = "update aka_perkuliahan_detail set num_jml_sisa = '{$sisa}',num_jml_peserta = '{$peserta}'
+        where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) . "' ";
+
+    $QueryUpdate=mysqli_query($conn, $inSql);
+
+} 
+// End Update sisa kursi
      
 if($ErrMasa == 'KRS'){
     if($ErrCekKeuangan == 'ada'){
