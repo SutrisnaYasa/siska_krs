@@ -11,6 +11,7 @@
    $str_id_nim = $_POST['str_id_nim'];
    $int_kd_perkuliahan_d = $_POST['int_kd_perkuliahan_d'];
    $sks=$_POST['num_sks'];
+//    var_dump($sks);
 // End Mengambil Request
 
 // Mengambil Pablic_reset
@@ -141,38 +142,56 @@
         }
 
         $lastElement = end($mhs);
-
+        $flastElement = (float)$lastElement;
+        // var_dump($flastElement);
     // End Query mengambil ips Mahasiswa
 
     // Mengambil jumlah SKS diprogramkan
-        $aSql = "SELECT COALESCE(
-        (SELECT SUM(z.sks) FROM (
-        SELECT d.num_sks as sks FROM aka_krs a
-        RIGHT JOIN aka_perkuliahan_detail b ON a.int_kd_perkuliahan_d=b.int_kd_perkuliahan_d
-        RIGHT JOIN aka_perkuliahan c ON b.str_kd_perkuliahan = c.str_kd_perkuliahan
-        RIGHT JOIN aka_matakuliah_detail d ON c.str_kd_mk = d.str_kd_mk
-        RIGHT JOIN mhs_mahasiswa e ON a.str_id_nim=e.str_id_nim
-        WHERE a.str_id_nim='" . $str_id_nim . "'
-        AND a.bol_semester = (select bol_semester_krs from pablic_reset) and a.str_thn_ajaran = (select str_thn_ajaran_krs from pablic_reset) and
-        (
-            e.str_kd_prodi=d.str_kd_prodi
-            OR d.str_kd_prodi='0004'
-            OR (e.str_kd_prodi='0001' AND (d.str_kd_prodi='0006' OR d.str_kd_prodi='0007'))
-            OR (e.str_kd_prodi='0002' AND (d.str_kd_prodi='0005' OR d.str_kd_prodi='0007'))
-            OR (e.str_kd_prodi='0003' AND (d.str_kd_prodi='0005' OR d.str_kd_prodi='0006'))
-        )
-        AND ((c.bol_semester='Ganjil' AND (d.num_kd_semester=1 OR d.num_kd_semester=3 OR d.num_kd_semester=5 OR d.num_kd_semester=7))
-            OR (c.bol_semester='Genap' AND (d.num_kd_semester=2 OR d.num_kd_semester=4 OR d.num_kd_semester=6 OR d.num_kd_semester=8)))
-        Group BY a.str_id_nim,  a.str_thn_ajaran, d.str_kd_mk) as z), 0) AS totalSKS";
+        // $aSql = "SELECT COALESCE(
+        // (SELECT SUM(z.sks) FROM (
+        // SELECT d.num_sks as sks FROM aka_krs a
+        // RIGHT JOIN aka_perkuliahan_detail b ON a.int_kd_perkuliahan_d=b.int_kd_perkuliahan_d
+        // RIGHT JOIN aka_perkuliahan c ON b.str_kd_perkuliahan = c.str_kd_perkuliahan
+        // RIGHT JOIN aka_matakuliah_detail d ON c.str_kd_mk = d.str_kd_mk
+        // RIGHT JOIN mhs_mahasiswa e ON a.str_id_nim=e.str_id_nim
+        // WHERE a.str_id_nim='" . $str_id_nim . "'
+        // AND a.bol_semester = (select bol_semester_krs from pablic_reset) and a.str_thn_ajaran = (select str_thn_ajaran_krs from pablic_reset) and
+        // (
+        //     e.str_kd_prodi=d.str_kd_prodi
+        //     OR d.str_kd_prodi='0004'
+        //     OR (e.str_kd_prodi='0001' AND (d.str_kd_prodi='0006' OR d.str_kd_prodi='0007'))
+        //     OR (e.str_kd_prodi='0002' AND (d.str_kd_prodi='0005' OR d.str_kd_prodi='0007'))
+        //     OR (e.str_kd_prodi='0003' AND (d.str_kd_prodi='0005' OR d.str_kd_prodi='0006'))
+        // )
+        // AND ((c.bol_semester='Ganjil' AND (d.num_kd_semester=1 OR d.num_kd_semester=3 OR d.num_kd_semester=5 OR d.num_kd_semester=7))
+        //     OR (c.bol_semester='Genap' AND (d.num_kd_semester=2 OR d.num_kd_semester=4 OR d.num_kd_semester=6 OR d.num_kd_semester=8)))
+        // Group BY a.str_id_nim,  a.str_thn_ajaran, d.str_kd_mk) as z), 0) AS totalSKS";
+
+        $aSql = "SELECT SUM(sks) AS tot_sks FROM (
+            SELECT d.num_sks as sks FROM aka_krs a
+            RIGHT JOIN aka_perkuliahan_detail b ON a.int_kd_perkuliahan_d=b.int_kd_perkuliahan_d
+            RIGHT JOIN aka_perkuliahan c ON b.str_kd_perkuliahan = c.str_kd_perkuliahan
+            RIGHT JOIN aka_matakuliah_detail d ON c.str_kd_mk = d.str_kd_mk
+            RIGHT JOIN mhs_mahasiswa e ON a.str_id_nim=e.str_id_nim
+            WHERE a.str_id_nim='" . $str_id_nim . "'
+            AND a.bol_semester = (select bol_semester_krs from pablic_reset) and a.str_thn_ajaran = (select str_thn_ajaran_krs from pablic_reset)) AS total_sks";
+
 
         $aQuery = mysqli_query($conn, $aSql);
         $ttlSKS = mysqli_fetch_object($aQuery);
+        // var_dump($ttlSKS);
 
-        $msg = $ttlSKS->totalSKS;
+        // $msg = (int)$ttlSKS->totalSKS;
+        $msg = (int)$ttlSKS->tot_sks;
+        $intSKS = (int)$sks;
+        // var_dump($msg);
+        // var_dump($intSKS);
+        
     // End Mengambil jumlah SKS diprogramkan
 
         // Menambahkan jumlah sks yang akan diambil dengan sks yg sudah diambil
-        $plusSks = $msg + $sks;
+        $plusSks = $msg + $intSKS;
+        // var_dump($plusSks);
         // End Menambahkan jumlah sks yang akan diambil dengan sks yg sudah diambil
 
     // Melakukan pengecekan ips dan sks yang diambil
@@ -187,6 +206,23 @@
         }else{
             $ErrIps = 'Maaf, Tidak Bisa Mengambil Mata Kuliah Lagi' ;
         }
+
+        // if($plusSks > 24) {
+        //     $ErrIps = 'Maaf, Tidak Bisa Mengambil Mata Kuliah Lagi' ;
+        // }else {
+        //     if ($flastElement >= 3.25 && $plusSks <= 24) {
+        //         $ErrIps = 'IPS';
+        //     }else if( 2.75 <= $flastElement && $flastElement < 3.25 && $plusSks <= 21){
+        //         $ErrIps = 'IPS';
+        //     }else if( 2.00 <= $flastElement && $flastElement < 2.75 && $plusSks <= 18){
+        //         $ErrIps = 'IPS';
+        //     }else if($flastElement < 2.00 && $plusSks <= 15){
+        //         $ErrIps = 'IPS';
+        //     }else{
+        //         $ErrIps = 'Error' ;
+        //     }
+        // }
+        
     // End Melakukan pengecekan ips dan sks yang diambil
 // End Melakukan Pengecekan IPS dan SKS yang Bisa Diambil     
 
