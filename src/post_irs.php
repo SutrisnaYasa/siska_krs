@@ -343,7 +343,7 @@ if($ErrMasa == 'KRS'){
         if($ErrPembayaran == 'KRSPembayaran'){
             if($ErrStts == 'KRSaktif'){
                 if($ErrIps == 'IPS'){
-                    if($Err = '1'){
+                    if($ErrSyarat = '1'){
                         if($Err3 == '3'){
                             if($Err4 == ''){
                                 if($Err5 == '5'){
@@ -427,7 +427,7 @@ if($ErrMasa == 'KRS'){
                         // echo $Err;
                         echo json_encode([
                             'status'=>false,
-                            'message'=> $Err
+                            'message'=> $ErrSyarat
                         ]);
                     }
                 }else {
