@@ -8,10 +8,7 @@
 // Akhir Mengambil request
 
 // Cek matakuliah syarat
-$angkatan = substr($str_id_nim, 0, 4);
-if('UM1714' == $kd_mk_p and $angkatan <= '2014') {
-   $Err = '1';
-} else {
+
     $ssSql = "SELECT * FROM aka_nilai where str_id_nim = '" . $str_id_nim . "' and str_kd_mk in (SELECT str_kd_mk_syarat FROM
     aka_matakuliah_syarat WHERE str_kd_mk = '" . $kd_mk_p . "')";
 
@@ -26,15 +23,15 @@ if('UM1714' == $kd_mk_p and $angkatan <= '2014') {
         $ssQueryS = mysqli_query($conn, $sqlsyarat);
         while ($ssRowS = mysqli_fetch_object($ssQueryS)) {
 
-            $Err = 'Mata Kuliah Syarat'. ' '.
+            $ErrSyarat = 'Mata Kuliah Syarat'. ' '.
             $ssRowS->str_nm_mk . ' '. "Tidak Terpenuhi\n";
 
-            echo $Err;
+            echo $ErrSyarat;
         };
     } else{
-        echo $Err = '1';
+        echo $ErrSyarat = '1';
     }
-}
+
 // End Cek matakuliah syarat DONE
                    
 mysqli_close($conn);

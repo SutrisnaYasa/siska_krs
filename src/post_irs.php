@@ -228,32 +228,27 @@
 // End Melakukan Pengecekan IPS dan SKS yang Bisa Diambil     
 
 // Cek matakuliah syarat
-    $angkatan = substr($str_id_nim, 0, 4);
-    if('UM1714' == $kd_mk_p and $angkatan <= '2014') {
-       $Err = '1';
-    } else {
-        $ssSql = "SELECT * FROM aka_nilai where str_id_nim = '" . $str_id_nim . "' and str_kd_mk in (SELECT str_kd_mk_syarat FROM
-        aka_matakuliah_syarat WHERE str_kd_mk = '" . $kd_mk_p . "')";
+    $ssSql = "SELECT * FROM aka_nilai where str_id_nim = '" . $str_id_nim . "' and str_kd_mk in (SELECT str_kd_mk_syarat FROM
+    aka_matakuliah_syarat WHERE str_kd_mk = '" . $kd_mk_p . "')";
 
-        $ssQuery = mysqli_query($conn, $ssSql);
-        $cekssQuery=mysqli_num_rows($ssQuery);
+    $ssQuery = mysqli_query($conn, $ssSql);
+    $cekssQuery=mysqli_num_rows($ssQuery);
 
-        if (0 == $cekssQuery) {
-            $sqlsyarat = "SELECT b.str_nm_mk FROM aka_matakuliah_syarat a
-            INNER JOIN aka_matakuliah b ON a.str_kd_mk_syarat = b.str_kd_mk
-            WHERE a.str_kd_mk = '" . $kd_mk_p . "' ";
+    if (0 == $cekssQuery) {
+        $sqlsyarat = "SELECT b.str_nm_mk FROM aka_matakuliah_syarat a
+        INNER JOIN aka_matakuliah b ON a.str_kd_mk_syarat = b.str_kd_mk
+        WHERE a.str_kd_mk = '" . $kd_mk_p . "' ";
 
-            $ssQueryS = mysqli_query($conn, $sqlsyarat);
-            while ($ssRowS = mysqli_fetch_object($ssQueryS)) {
+        $ssQueryS = mysqli_query($conn, $sqlsyarat);
+        while ($ssRowS = mysqli_fetch_object($ssQueryS)) {
 
-                $Err = 'Mata Kuliah Syarat'. ' '.
-                $ssRowS->str_nm_mk . ' '. "Tidak Terpenuhi\n";
+            $ErrSyarat = 'Mata Kuliah Syarat'. ' '.
+            $ssRowS->str_nm_mk . ' '. "Tidak Terpenuhi\n";
 
-                // echo $Err;
-            };
-        } else{
-            $Err = '1';
-        }
+            // echo $Err;
+        };
+    } else{
+        $ErrSyarat = '1';
     }
 // End Cek matakuliah syarat DONE
 
