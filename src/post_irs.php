@@ -240,11 +240,16 @@
         WHERE a.str_kd_mk = '" . $kd_mk_p . "' ";
 
         $ssQueryS = mysqli_query($conn, $sqlsyarat);
-        while ($ssRowS = mysqli_fetch_object($ssQueryS)) {
+        $cQueryS=mysqli_num_rows($ssQueryS);
+        if ($cQueryS > 0){
+            while ($ssRowS = mysqli_fetch_object($ssQueryS)) {
 
-            $ErrSyarat = 'Mata Kuliah Syarat'. ' '.
-            $ssRowS->str_nm_mk . ' '. "Tidak Terpenuhi\n";
-        };
+                $ErrSyarat = 'Mata Kuliah Syarat'. ' '.
+                $ssRowS->str_nm_mk . ' '. "Tidak Terpenuhi\n";
+            };
+        } else {
+            $ErrSyarat = '1';
+        }
     } else{
         $ErrSyarat = '1';
     }

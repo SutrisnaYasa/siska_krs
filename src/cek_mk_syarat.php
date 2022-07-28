@@ -21,17 +21,19 @@
         WHERE a.str_kd_mk = '" . $kd_mk_p . "' ";
 
         $ssQueryS = mysqli_query($conn, $sqlsyarat);
-        while ($ssRowS = mysqli_fetch_object($ssQueryS)) {
+        $cQueryS=mysqli_num_rows($ssQueryS);
+        if ($cQueryS > 0){
+            while ($ssRowS = mysqli_fetch_object($ssQueryS)) {
 
-            $ErrSyarat = 'Mata Kuliah Syarat'. ' '.
-            $ssRowS->str_nm_mk . ' '. "Tidak Terpenuhi\n";
-
-            echo $ErrSyarat;
-        };
+                echo $ErrSyarat = 'Mata Kuliah Syarat'. ' '.
+                $ssRowS->str_nm_mk . ' '. "Tidak Terpenuhi\n";
+            };
+        } else {
+            echo $ErrSyarat = '1';
+        }
     } else{
         echo $ErrSyarat = '1';
     }
-
 // End Cek matakuliah syarat DONE
                    
 mysqli_close($conn);
