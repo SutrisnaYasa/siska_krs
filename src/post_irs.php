@@ -244,8 +244,6 @@
 
             $ErrSyarat = 'Mata Kuliah Syarat'. ' '.
             $ssRowS->str_nm_mk . ' '. "Tidak Terpenuhi\n";
-
-            $ErrSyarat;
         };
     } else{
         $ErrSyarat = '1';
