@@ -305,7 +305,7 @@
         }
     }
 
-    if('' == $Err4) {
+    if('' == $Err4 && $ErrCekKeuangan == 'ada' && $ErrPembayaran == 'KRSPembayaran' && $ErrStts == 'KRSaktif' && $ErrIps == 'IPS' && $ErrSyarat == '1' && $Err3 == '3' && $Err5 == '5' && $Err2 == '2') {
         $Sql = "SELECT num_jml_sisa,num_jml_peserta from aka_perkuliahan_detail
         where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) . "' ";
 
