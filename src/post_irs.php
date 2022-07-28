@@ -11,6 +11,7 @@
    $str_id_nim = $_POST['str_id_nim'];
    $int_kd_perkuliahan_d = $_POST['int_kd_perkuliahan_d'];
    $sks=$_POST['num_sks'];
+   $kd_mk_p=$_GET['str_kd_mk'];
 //    var_dump($sks);
 // End Mengambil Request
 
