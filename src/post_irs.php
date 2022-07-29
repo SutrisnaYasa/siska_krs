@@ -313,7 +313,7 @@
 
 // Cek sisa kursi
     $sSqlsisa = "SELECT num_jml_sisa,num_jml_peserta from aka_perkuliahan_detail
-    where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) . "' ";
+    where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) . "' FOR UPDATE";
 
     $sQuerysisa = mysqli_query($conn, $sSqlsisa);
     $srowsisa = mysqli_fetch_object($sQuerysisa);
@@ -325,14 +325,9 @@
         $Err2 = '2';
         // Update sisa kursi
             if('' == $Err4 && $ErrCekKeuangan == 'ada' && $ErrPembayaran == 'KRSPembayaran' && $ErrStts == 'KRSaktif' && $ErrIps == 'IPS' && $ErrSyarat == '1' && $Err3 == '3' && $Err5 == '5' && $Err2 == '2') {
-                
-               
+
                 $sisa = $sisa - 1;
-                
-
-                $inSql = "update aka_perkuliahan_detail set num_jml_sisa = '{$sisa}',num_jml_peserta = '{$peserta}'
-                    where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) . "' ";
-
+                $inSql = "update aka_perkuliahan_detail set num_jml_sisa = '{$sisa}',num_jml_peserta = '{$peserta}' where int_kd_perkuliahan_d = '" . mysqli_real_escape_string($conn, $int_kd_perkuliahan_d) . "' ";
                 $QueryUpdate=mysqli_query($conn, $inSql);
 
             } 
