@@ -51,7 +51,7 @@
     $today=date ("Y-m-d");
     $tanggal_mulai = strtotime('2022-06-25');
     $tgl_today = strtotime($today);
-    $tanggal_akhir = strtotime('2022-07-30');
+    $tanggal_akhir = strtotime('2022-08-30');
     if ($tgl_today < $tanggal_mulai){
         $ErrMasa = 'KRS belum dibuka';
     }else if ($tgl_today > $tanggal_akhir){
