@@ -195,6 +195,21 @@
         // var_dump($plusSks);
         // End Menambahkan jumlah sks yang akan diambil dengan sks yg sudah diambil
 
+        // Menampilkan jumlah sks yang bisa diambil pada alert
+            if($lastElement >= 3.25){
+                $max = '24 SKS';
+            } else if (2.75 <= $lastElement && $lastElement < 3.25){
+                $max = '21 SKS';   
+            } else if (2.00 <= $lastElement && $lastElement < 2.75) {
+                $max = '18 SKS';
+            } else if ($lastElement < 2.00) {
+                $max = '15 SKS';
+            } else {
+                $max = '0 SKS';
+            }
+        // End Menampilkan jumlah sks yang bisa diambil pada alert
+
+
     // Melakukan pengecekan ips dan sks yang diambil
         if ($lastElement >= 3.25 && $plusSks <= 24) {
             $ErrIps = 'IPS';
@@ -205,7 +220,7 @@
         }else if($lastElement < 2.00 && $plusSks <= 15){
             $ErrIps = 'IPS';
         }else{
-            $ErrIps = 'Maaf, Tidak Bisa Mengambil Mata Kuliah Lagi' ;
+            $ErrIps = 'Maaf, Tidak bisa mengambil mata kuliah lagi, karena IPS anda pada semester sebelumnya adalah '.$lastElement.'. Maka maksimal SKS yang bisa diambil pada semester ini adalah '.$max.'' ;
         }
 
         // if($plusSks > 24) {
